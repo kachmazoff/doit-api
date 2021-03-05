@@ -8,10 +8,12 @@ import (
 
 type Services struct {
 	Users
+	Challenges
 }
 
 func NewServices(r *repository.Repositories, sender mailing.Sender) *Services {
 	return &Services{
-		Users: impl.NewUsersService(r.Users, sender),
+		Users:      impl.NewUsersService(r.Users, sender),
+		Challenges: impl.NewChallengesService(r.Challenges),
 	}
 }

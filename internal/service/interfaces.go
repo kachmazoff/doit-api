@@ -7,3 +7,8 @@ type Users interface {
 	ConfirmAccount(userId string) error
 	GetByUsername(username string) (model.User, error)
 }
+
+type Challenges interface {
+	Create(challenge model.Challenge) (string, error)
+	GetAll() ([]model.Challenge, error)
+}
