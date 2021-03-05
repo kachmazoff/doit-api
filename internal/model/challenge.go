@@ -8,7 +8,7 @@ type Challenge struct {
 	AuthorId         string    `json:"author_id" db:"author_id"`
 	ShowAuthor       bool      `json:"show_author" db:"show_author"`
 	Title            string    `json:"title" db:"title"`
-	Body             string    `json:"body" db:"body"`
+	Body             *string   `json:"body" db:"body"`
 	VisibleType      string    `json:"visible_type" db:"visible_type"`
 	ParticipantsType string    `json:"participants_type" db:"participants_type"`
 }
