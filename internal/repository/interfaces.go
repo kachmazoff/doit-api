@@ -9,3 +9,9 @@ type Users interface {
 	SetStatus(id string, status string) error
 	GetEmailById(id string) (string, error)
 }
+
+type Challenges interface {
+	Create(model.Challenge) (string, error)
+	// TODO: Remove later. Temp method
+	GetAll() ([]model.Challenge, error)
+}

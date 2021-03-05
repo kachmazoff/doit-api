@@ -6,11 +6,13 @@ import (
 )
 
 type Repositories struct {
-	Users Users
+	Users
+	Challenges
 }
 
 func NewMysqlRepos(db *sqlx.DB) *Repositories {
 	return &Repositories{
-		Users: mysql.NewUsersMysqlRepo(db),
+		Users:      mysql.NewUsersMysqlRepo(db),
+		Challenges: mysql.NewChallengesMysqlRepo(db),
 	}
 }

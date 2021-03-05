@@ -1,5 +1,6 @@
 package mysql
 
 const (
-	usersTable = `users`
+	usersTable      = `users`
+	challengesTable = `challenges`
 )
