@@ -10,6 +10,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/kachmazoff/doit-api"
 	_ "github.com/kachmazoff/doit-api/docs"
+	"github.com/kachmazoff/doit-api/internal/auth"
 	"github.com/kachmazoff/doit-api/internal/controller"
 	"github.com/kachmazoff/doit-api/internal/mailing"
 	"github.com/kachmazoff/doit-api/internal/repository"
@@ -71,19 +72,14 @@ func main() {
 
 	port := env("PORT", "8080")
 
+	tokenManager, err := auth.NewManager("secret")
+	if err != nil {
+		log.Fatalf("Failed to init token manager: %s", err.Error())
+	}
+
 	repos := repository.NewMysqlRepos(db)
 	services := service.NewServices(repos, sender)
-	controllers := controller.NewController(services)
-
-	// user := model.User{
-	// 	Username: "root",
-	// 	Email:    "alek.kachmazov@yandex.ru",
-	// 	Password: "root",
-	// }
-
-	// userId, _ := services.Users.Create(user)
-	// services.Users.ConfirmAccount(userId)
-	// return
+	controllers := controller.NewController(services, tokenManager)
 
 	srv := new(doit.Server)
 	go func() {
