@@ -7,6 +7,14 @@ import (
 	"github.com/kachmazoff/doit-api/internal/model"
 )
 
+func (h *Controller) initChallengesRoutes(api *gin.RouterGroup) {
+	courses := api.Group("/challenges")
+	{
+		courses.GET("/", h.getAllChallenges)
+		courses.POST("/", h.userIdentity, h.createChallenge)
+	}
+}
+
 func (h *Controller) createChallenge(c *gin.Context) {
 	var input model.Challenge
 	if err := c.BindJSON(&input); err != nil {
@@ -25,7 +33,7 @@ func (h *Controller) createChallenge(c *gin.Context) {
 	})
 }
 
-func (h *Controller) getChallenges(c *gin.Context) {
+func (h *Controller) getAllChallenges(c *gin.Context) {
 	challenges, err := h.services.Challenges.GetAll()
 
 	if err != nil {
