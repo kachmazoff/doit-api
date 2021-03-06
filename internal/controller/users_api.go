@@ -65,9 +65,3 @@ func (h *Controller) activateAccount(c *gin.Context) {
 
 	c.JSON(http.StatusOK, createMessage("Account activated successfully"))
 }
-
-func createMessage(message string) map[string]interface{} {
-	return map[string]interface{}{
-		"message": "Account activated successfully",
-	}
-}
