@@ -16,4 +16,8 @@ type Challenges interface {
 	GetAll() ([]model.Challenge, error)
 }
 
-type Timeline interface{}
+type Timeline interface {
+	CreateChallenge() error
+	// TODO: Remove later. Temp method
+	GetAll() ([]model.TimelineItem, error)
+}
