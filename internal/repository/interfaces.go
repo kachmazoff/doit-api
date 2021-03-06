@@ -15,3 +15,5 @@ type Challenges interface {
 	// TODO: Remove later. Temp method
 	GetAll() ([]model.Challenge, error)
 }
+
+type Timeline interface{}
