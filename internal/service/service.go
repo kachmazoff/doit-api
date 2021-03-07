@@ -9,11 +9,21 @@ import (
 type Services struct {
 	Users
 	Challenges
+	Timeline
 }
 
 func NewServices(r *repository.Repositories, sender mailing.Sender) *Services {
+	users := impl.NewUsersService(r.Users, sender)
+	challenges := impl.NewChallengesService(r.Challenges)
+	notes := impl.NewNotesService(r.Notes)
+	participants := impl.NewParticipantsService(r.Participants)
+	suggestions := impl.NewSuggestionsService(r.Suggestions)
+
+	timeline := impl.NewTimelineService(r.Timeline, *challenges, *notes, *participants, *suggestions)
+
 	return &Services{
-		Users:      impl.NewUsersService(r.Users, sender),
-		Challenges: impl.NewChallengesService(r.Challenges),
+		Users:      users,
+		Challenges: challenges,
+		Timeline:   timeline,
 	}
 }

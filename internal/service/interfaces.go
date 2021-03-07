@@ -17,7 +17,7 @@ type Challenges interface {
 type Timeline interface {
 	GetAll() ([]model.TimelineItem, error)
 	GetCommon() ([]model.TimelineItem, error)
-	Anonymize(*model.TimelineItem) bool
+	AnonymizeItem(*model.TimelineItem) bool
 }
 
 type Participants interface {
