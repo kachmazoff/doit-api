@@ -1,8 +1,6 @@
 package impl
 
 import (
-	"errors"
-
 	"github.com/kachmazoff/doit-api/internal/model"
 	"github.com/kachmazoff/doit-api/internal/repository"
 )
@@ -17,6 +15,16 @@ func NewSuggestionsService(repo repository.Suggestions) *SuggestionsService {
 	}
 }
 
-func (u *SuggestionsService) GetById(id string) (model.Suggestion, error) {
-	return model.Suggestion{}, errors.New("Not implemented")
+func (s *SuggestionsService) GetById(id string) (model.Suggestion, error) {
+	suggestion, err := s.repo.GetById(id)
+
+	if err != nil {
+		return model.Suggestion{}, err
+	}
+
+	if suggestion.Anonymous {
+		suggestion.AuthorId = ""
+	}
+
+	return suggestion, nil
 }
