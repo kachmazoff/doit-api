@@ -6,4 +6,5 @@ const (
 	timelineTable     = `timeline`
 	participantsTable = `participants`
 	suggestionsTable  = `suggestions`
+	notesTable        = `notes`
 )

@@ -1,7 +1,7 @@
 package mysql
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/kachmazoff/doit-api/internal/model"
@@ -16,5 +16,12 @@ func NewNotesMysqlRepo(db *sqlx.DB) *NotesMysqlRepo {
 }
 
 func (r *NotesMysqlRepo) GetById(id string) (model.Note, error) {
-	return model.Note{}, errors.New("Not implemented")
+	query := fmt.Sprintf("SELECT * FROM %s WHERE id=? LIMIT 1", notesTable)
+
+	var note model.Note
+	if err := r.db.Get(&note, query, id); err != nil {
+		return model.Note{}, err
+	}
+
+	return note, nil
 }
