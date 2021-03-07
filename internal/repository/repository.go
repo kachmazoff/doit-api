@@ -9,12 +9,18 @@ type Repositories struct {
 	Users
 	Challenges
 	Timeline
+	Participants
+	Notes
+	Suggestions
 }
 
 func NewMysqlRepos(db *sqlx.DB) *Repositories {
 	return &Repositories{
-		Users:      mysql.NewUsersMysqlRepo(db),
-		Challenges: mysql.NewChallengesMysqlRepo(db),
-		Timeline:   mysql.NewTimelineMysqlRepo(db),
+		Users:        mysql.NewUsersMysqlRepo(db),
+		Challenges:   mysql.NewChallengesMysqlRepo(db),
+		Timeline:     mysql.NewTimelineMysqlRepo(db),
+		Participants: mysql.NewParticipantsMysqlRepo(db),
+		Notes:        mysql.NewNotesMysqlRepo(db),
+		Suggestions:  mysql.NewSuggestionsMysqlRepo(db),
 	}
 }
