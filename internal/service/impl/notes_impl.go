@@ -1,8 +1,6 @@
 package impl
 
 import (
-	"errors"
-
 	"github.com/kachmazoff/doit-api/internal/model"
 	"github.com/kachmazoff/doit-api/internal/repository"
 )
@@ -17,6 +15,16 @@ func NewNotesService(repo repository.Notes) *NotesService {
 	}
 }
 
-func (u *NotesService) GetById(id string) (model.Note, error) {
-	return model.Note{}, errors.New("Not implemented")
+func (s *NotesService) GetById(id string) (model.Note, error) {
+	note, err := s.repo.GetById(id)
+
+	if err != nil {
+		return model.Note{}, err
+	}
+
+	if *note.Anonymous {
+		note.AuthorId = ""
+	}
+
+	return note, nil
 }
