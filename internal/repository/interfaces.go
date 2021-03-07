@@ -24,10 +24,12 @@ type Timeline interface {
 }
 
 type Participants interface {
+	Create(participant model.Participant) (string, error)
 	GetById(id string) (model.Participant, error)
 }
 
 type Notes interface {
+	Create(note model.Note) (string, error)
 	GetById(id string) (model.Note, error)
 }
 

@@ -3,6 +3,7 @@ package mysql
 import (
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/kachmazoff/doit-api/internal/model"
 )
@@ -24,4 +25,17 @@ func (r *ParticipantsMysqlRepo) GetById(id string) (model.Participant, error) {
 	}
 
 	return participant, nil
+}
+
+func (r *ParticipantsMysqlRepo) Create(participant model.Participant) (string, error) {
+	query := fmt.Sprintf("INSERT INTO %s (id, challenge_id, user_id, anonymous, visible_type) values (?, ?, ?, ?, ?)", participantsTable)
+	generatedId := uuid.New().String()
+
+	_, err := r.db.Exec(query, generatedId, participant.ChallengeId, participant.UserId, participant.Anonymous, participant.VisibleType)
+
+	if err != nil {
+		return "", err
+	}
+
+	return generatedId, nil
 }

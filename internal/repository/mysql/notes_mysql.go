@@ -3,6 +3,7 @@ package mysql
 import (
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/kachmazoff/doit-api/internal/model"
 )
@@ -25,4 +26,17 @@ func (r *NotesMysqlRepo) GetById(id string) (model.Note, error) {
 	}
 
 	return note, nil
+}
+
+func (r *NotesMysqlRepo) Create(note model.Note) (string, error) {
+	query := fmt.Sprintf("INSERT INTO %s (id, type, body, participant_id, author_id) values (?, ?, ?, ?, ?)", notesTable)
+	generatedId := uuid.New().String()
+
+	_, err := r.db.Exec(query, generatedId, note.Type, note.Body, note.ParticipantId, note.AuthorId)
+
+	if err != nil {
+		return "", err
+	}
+
+	return generatedId, nil
 }
