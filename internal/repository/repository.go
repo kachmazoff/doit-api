@@ -12,6 +12,7 @@ type Repositories struct {
 	Participants
 	Notes
 	Suggestions
+	Followers
 }
 
 func NewMysqlRepos(db *sqlx.DB) *Repositories {
@@ -22,5 +23,6 @@ func NewMysqlRepos(db *sqlx.DB) *Repositories {
 		Participants: mysql.NewParticipantsMysqlRepo(db),
 		Notes:        mysql.NewNotesMysqlRepo(db),
 		Suggestions:  mysql.NewSuggestionsMysqlRepo(db),
+		Followers:    mysql.NewFollowersMysqlRepo(db),
 	}
 }

@@ -37,3 +37,10 @@ type Notes interface {
 type Suggestions interface {
 	GetById(id string) (model.Suggestion, error)
 }
+
+type Followers interface {
+	Subscribe(fromId string, toId string) error
+	Unsubscribe(fromId string, toId string) error
+	GetFollowersIds(userId string) ([]string, error)
+	GetFollowedIds(userId string) ([]string, error)
+}

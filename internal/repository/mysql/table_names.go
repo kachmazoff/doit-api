@@ -7,4 +7,5 @@ const (
 	participantsTable = `participants`
 	suggestionsTable  = `suggestions`
 	notesTable        = `notes`
+	followersTable    = `followers`
 )
