@@ -20,4 +20,17 @@ type Timeline interface {
 	CreateChallenge() error
 	// TODO: Remove later. Temp method
 	GetAll() ([]model.TimelineItem, error)
+	GetCommon() ([]model.TimelineItem, error)
+}
+
+type Participants interface {
+	GetById(id string) (model.Participant, error)
+}
+
+type Notes interface {
+	GetById(id string) (model.Note, error)
+}
+
+type Suggestions interface {
+	GetById(id string) (model.Suggestion, error)
 }
