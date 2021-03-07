@@ -22,9 +22,18 @@ func (s *SuggestionsService) GetById(id string) (model.Suggestion, error) {
 		return model.Suggestion{}, err
 	}
 
+	s.Anonymize(&suggestion)
+
+	return suggestion, nil
+}
+
+func (s *SuggestionsService) Anonymize(suggestion *model.Suggestion) bool {
+	isAnonym := false
+
 	if suggestion.Anonymous {
+		isAnonym = true
 		suggestion.AuthorId = ""
 	}
 
-	return suggestion, nil
+	return isAnonym
 }

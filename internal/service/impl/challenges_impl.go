@@ -24,5 +24,15 @@ func (u *ChallengesService) Create(newChallenge model.Challenge) (string, error)
 
 func (u *ChallengesService) GetAll() ([]model.Challenge, error) {
 	return u.repo.GetAll()
+}
 
+func (s *ChallengesService) Anonymize(challenge *model.Challenge) bool {
+	isAnonym := false
+
+	if !challenge.ShowAuthor {
+		isAnonym = true
+		challenge.AuthorId = ""
+	}
+
+	return isAnonym
 }
