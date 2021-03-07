@@ -40,3 +40,14 @@ func (r *NotesMysqlRepo) Create(note model.Note) (string, error) {
 
 	return generatedId, nil
 }
+
+func (r *NotesMysqlRepo) GetNotesOfParticipant(participantId string) ([]model.Note, error) {
+	query := fmt.Sprintf("SELECT * FROM %s WHERE participant_id=?", participantsTable)
+
+	var notes []model.Note
+	if err := r.db.Get(&notes, query, participantId); err != nil {
+		return []model.Note{}, err
+	}
+
+	return notes, nil
+}
