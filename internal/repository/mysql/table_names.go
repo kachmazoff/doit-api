@@ -5,4 +5,5 @@ const (
 	challengesTable   = `challenges`
 	timelineTable     = `timeline`
 	participantsTable = `participants`
+	suggestionsTable  = `suggestions`
 )
