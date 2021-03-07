@@ -38,6 +38,7 @@ func (h *Controller) InitRoutes() *gin.Engine {
 		api.POST("/auth/activate", h.activateAccount)
 		api.GET("/user", h.getUser)
 		h.initChallengesRoutes(api)
+		h.initTimelineRoutes(api)
 	}
 
 	return router
