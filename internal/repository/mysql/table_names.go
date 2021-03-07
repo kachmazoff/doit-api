@@ -1,7 +1,8 @@
 package mysql
 
 const (
-	usersTable      = `users`
-	challengesTable = `challenges`
-	timelineTable   = `timeline`
+	usersTable        = `users`
+	challengesTable   = `challenges`
+	timelineTable     = `timeline`
+	participantsTable = `participants`
 )

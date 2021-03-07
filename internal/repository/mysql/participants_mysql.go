@@ -1,7 +1,7 @@
 package mysql
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/kachmazoff/doit-api/internal/model"
@@ -16,5 +16,12 @@ func NewParticipantsMysqlRepo(db *sqlx.DB) *ParticipantsMysqlRepo {
 }
 
 func (r *ParticipantsMysqlRepo) GetById(id string) (model.Participant, error) {
-	return model.Participant{}, errors.New("Not implemented")
+	query := fmt.Sprintf("SELECT * FROM %s WHERE id=? LIMIT 1", participantsTable)
+
+	var participant model.Participant
+	if err := r.db.Get(&participant, query, id); err != nil {
+		return model.Participant{}, err
+	}
+
+	return participant, nil
 }
