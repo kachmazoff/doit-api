@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/kachmazoff/doit-api/internal/model"
 )
 
 type FollowersMysqlRepo struct {
@@ -34,6 +35,28 @@ func (r *FollowersMysqlRepo) GetFollowedIds(userId string) ([]string, error) {
 	}
 
 	return ids, nil
+}
+
+func (r *FollowersMysqlRepo) GetFollowers(userId string) ([]model.User, error) {
+	query := fmt.Sprintf("SELECT * FROM %s WHERE id IN (SELECT follower_id FROM %s WHERE followee_id=?)", usersTable, followersTable)
+
+	var users []model.User
+	if err := r.db.Select(&users, query, userId); err != nil {
+		return []model.User{}, err
+	}
+
+	return users, nil
+}
+
+func (r *FollowersMysqlRepo) GetFollowees(userId string) ([]model.User, error) {
+	query := fmt.Sprintf("SELECT * FROM %s WHERE id IN (SELECT followee_id FROM %s WHERE follower_id=?)", usersTable, followersTable)
+
+	var users []model.User
+	if err := r.db.Select(&users, query, userId); err != nil {
+		return []model.User{}, err
+	}
+
+	return users, nil
 }
 
 func (r *FollowersMysqlRepo) Subscribe(fromId, toId string) error {

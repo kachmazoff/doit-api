@@ -43,4 +43,6 @@ type Followers interface {
 	Unsubscribe(fromId string, toId string) error
 	GetFollowersIds(userId string) ([]string, error)
 	GetFollowedIds(userId string) ([]string, error)
+	GetFollowers(userId string) ([]model.User, error)
+	GetFollowees(userId string) ([]model.User, error)
 }
