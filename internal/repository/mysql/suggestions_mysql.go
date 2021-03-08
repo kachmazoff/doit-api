@@ -3,6 +3,7 @@ package mysql
 import (
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/kachmazoff/doit-api/internal/model"
 )
@@ -13,6 +14,19 @@ type SuggestionsMysqlRepo struct {
 
 func NewSuggestionsMysqlRepo(db *sqlx.DB) *SuggestionsMysqlRepo {
 	return &SuggestionsMysqlRepo{db: db}
+}
+
+func (r *SuggestionsMysqlRepo) Create(suggestion model.Suggestion) (string, error) {
+	query := fmt.Sprintf("INSERT INTO %s (id, body, participant_id, author_id, anonymous) VALUES (?, ?, ?, ?, ?)", suggestionsTable)
+	generatedId := uuid.New().String()
+
+	_, err := r.db.Exec(query, generatedId, suggestion.Body, suggestion.ParticipantId, suggestion.AuthorId, suggestion.Anonymous)
+
+	if err != nil {
+		return "", err
+	}
+
+	return generatedId, nil
 }
 
 func (r *SuggestionsMysqlRepo) GetById(id string) (model.Suggestion, error) {
