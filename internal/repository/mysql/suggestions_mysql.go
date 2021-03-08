@@ -56,6 +56,12 @@ func (r *SuggestionsMysqlRepo) GetByAuthor(authorId string, onlyPublic bool) ([]
 	return r.selectSuggestions(query, authorId)
 }
 
+func (r *SuggestionsMysqlRepo) GetForUser(userId string) ([]model.Suggestion, error) {
+	query := fmt.Sprintf("SELECT s.* FROM %s AS s JOIN %s AS p ON s.participant_id=p.id WHERE p.user_id=? ORDER BY created DESC", suggestionsTable, participantsTable)
+
+	return r.selectSuggestions(query, userId)
+}
+
 func (r *SuggestionsMysqlRepo) selectSuggestions(query string, args ...interface{}) ([]model.Suggestion, error) {
 	var suggestions []model.Suggestion
 	if err := r.db.Select(&suggestions, query, args...); err != nil {
