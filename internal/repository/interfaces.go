@@ -40,6 +40,8 @@ type Notes interface {
 
 type Suggestions interface {
 	GetById(id string) (model.Suggestion, error)
+	GetForParticipant(participantId string) ([]model.Suggestion, error)
+	GetByAuthor(authorId string, onlyPublic bool) ([]model.Suggestion, error)
 }
 
 type Followers interface {

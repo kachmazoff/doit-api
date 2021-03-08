@@ -25,3 +25,27 @@ func (r *SuggestionsMysqlRepo) GetById(id string) (model.Suggestion, error) {
 
 	return suggestion, nil
 }
+
+func (r *SuggestionsMysqlRepo) GetForParticipant(participantId string) ([]model.Suggestion, error) {
+	query := fmt.Sprintf("SELECT * FROM %s WHERE participant_id=?", suggestionsTable)
+
+	return r.selectSuggestions(query, participantId)
+}
+
+func (r *SuggestionsMysqlRepo) GetByAuthor(authorId string, onlyPublic bool) ([]model.Suggestion, error) {
+	query := fmt.Sprintf("SELECT * FROM %s WHERE author_id=?", suggestionsTable)
+	if onlyPublic {
+		query += " AND anonymous=true"
+	}
+
+	return r.selectSuggestions(query, authorId)
+}
+
+func (r *SuggestionsMysqlRepo) selectSuggestions(query string, args ...interface{}) ([]model.Suggestion, error) {
+	var suggestions []model.Suggestion
+	if err := r.db.Select(&suggestions, query, args); err != nil {
+		return []model.Suggestion{}, err
+	}
+
+	return suggestions, nil
+}
