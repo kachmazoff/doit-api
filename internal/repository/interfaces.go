@@ -28,8 +28,8 @@ type Timeline interface {
 type Participants interface {
 	Create(participant model.Participant) (string, error)
 	GetById(id string) (model.Participant, error)
-	GetActivePublicParticipantsOfUser(userId string) ([]model.Participant, error)
-	GetActivePublicParticipantsInChallenge(challengeId string) ([]model.Participant, error)
+	GetParticipationsOfUser(userId string, onlyPublic, onlyActive bool) ([]model.Participant, error)
+	GetParticipantsInChallenge(challengeId string, onlyPublic, onlyActive bool) ([]model.Participant, error)
 }
 
 type Notes interface {
