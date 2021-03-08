@@ -16,10 +16,10 @@ func NewFollowersMysqlRepo(db *sqlx.DB) *FollowersMysqlRepo {
 }
 
 func (r *FollowersMysqlRepo) GetFollowersIds(userId string) ([]string, error) {
-	query := fmt.Sprintf("SELECT follower_id FROM %s WHERE followee_id=?", followersTable)
+	query := selectFollowersQuery(userId)
 
 	var ids []string
-	if err := r.db.Select(&ids, query, userId); err != nil {
+	if err := r.db.Select(&ids, query); err != nil {
 		return []string{}, err
 	}
 
@@ -27,10 +27,10 @@ func (r *FollowersMysqlRepo) GetFollowersIds(userId string) ([]string, error) {
 }
 
 func (r *FollowersMysqlRepo) GetFollowedIds(userId string) ([]string, error) {
-	query := fmt.Sprintf("SELECT followee_id FROM %s WHERE follower_id=?", followersTable)
+	query := selectFolloweesQuery(userId)
 
 	var ids []string
-	if err := r.db.Select(&ids, query, userId); err != nil {
+	if err := r.db.Select(&ids, query); err != nil {
 		return []string{}, err
 	}
 
@@ -38,10 +38,10 @@ func (r *FollowersMysqlRepo) GetFollowedIds(userId string) ([]string, error) {
 }
 
 func (r *FollowersMysqlRepo) GetFollowers(userId string) ([]model.User, error) {
-	query := fmt.Sprintf("SELECT * FROM %s WHERE id IN (SELECT follower_id FROM %s WHERE followee_id=?)", usersTable, followersTable)
+	query := fmt.Sprintf("SELECT * FROM %s WHERE id IN (%s)", usersTable, selectFollowersQuery(userId))
 
 	var users []model.User
-	if err := r.db.Select(&users, query, userId); err != nil {
+	if err := r.db.Select(&users, query); err != nil {
 		return []model.User{}, err
 	}
 
@@ -49,10 +49,10 @@ func (r *FollowersMysqlRepo) GetFollowers(userId string) ([]model.User, error) {
 }
 
 func (r *FollowersMysqlRepo) GetFollowees(userId string) ([]model.User, error) {
-	query := fmt.Sprintf("SELECT * FROM %s WHERE id IN (SELECT followee_id FROM %s WHERE follower_id=?)", usersTable, followersTable)
+	query := fmt.Sprintf("SELECT * FROM %s WHERE id IN (%s)", usersTable, selectFolloweesQuery(userId))
 
 	var users []model.User
-	if err := r.db.Select(&users, query, userId); err != nil {
+	if err := r.db.Select(&users, query); err != nil {
 		return []model.User{}, err
 	}
 
@@ -73,4 +73,12 @@ func (r *FollowersMysqlRepo) Unsubscribe(fromId, toId string) error {
 	_, err := r.db.Exec(query, fromId, toId)
 
 	return err
+}
+
+func selectFolloweesQuery(userId string) string {
+	return fmt.Sprintf("SELECT followee_id FROM %s WHERE follower_id='%s'", followersTable, userId)
+}
+
+func selectFollowersQuery(userId string) string {
+	return fmt.Sprintf("SELECT follower_id FROM %s WHERE followee_id='%s'", followersTable, userId)
 }
