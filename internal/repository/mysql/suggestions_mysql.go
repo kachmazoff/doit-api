@@ -49,8 +49,9 @@ func (r *SuggestionsMysqlRepo) GetForParticipant(participantId string) ([]model.
 func (r *SuggestionsMysqlRepo) GetByAuthor(authorId string, onlyPublic bool) ([]model.Suggestion, error) {
 	query := fmt.Sprintf("SELECT * FROM %s WHERE author_id=?", suggestionsTable)
 	if onlyPublic {
-		query += " AND anonymous=true"
+		query += " AND anonymous=false"
 	}
+	query += " ORDER BY created DESC"
 
 	return r.selectSuggestions(query, authorId)
 }
