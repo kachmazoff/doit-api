@@ -43,7 +43,7 @@ func (r *SuggestionsMysqlRepo) GetByAuthor(authorId string, onlyPublic bool) ([]
 
 func (r *SuggestionsMysqlRepo) selectSuggestions(query string, args ...interface{}) ([]model.Suggestion, error) {
 	var suggestions []model.Suggestion
-	if err := r.db.Select(&suggestions, query, args); err != nil {
+	if err := r.db.Select(&suggestions, query, args...); err != nil {
 		return []model.Suggestion{}, err
 	}
 
