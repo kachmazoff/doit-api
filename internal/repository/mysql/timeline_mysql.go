@@ -35,7 +35,7 @@ func (r *TimelineMysqlRepo) GetAll() ([]model.TimelineItem, error) {
 			))
 		)
 	ORDER BY t.created DESC
-	`, selectBaseTimeline())
+	`, selectBaseTimelineQuery())
 
 	var timeline []model.TimelineItem
 	if err := r.db.Select(&timeline, query); err != nil {
@@ -60,7 +60,7 @@ func (r *TimelineMysqlRepo) GetCommon() ([]model.TimelineItem, error) {
 			))
 		)
 	ORDER BY t.created DESC
-	`, selectBaseTimeline())
+	`, selectBaseTimelineQuery())
 
 	var timeline []model.TimelineItem
 	if err := r.db.Select(&timeline, query); err != nil {
@@ -86,7 +86,7 @@ func (r *TimelineMysqlRepo) GetForUser(userId string) ([]model.TimelineItem, err
 			))
 		)
 	ORDER BY t.created DESC
-	`, selectBaseTimeline(), selectFolloweesQuery(userId))
+	`, selectBaseTimelineQuery(), selectFolloweesQuery(userId))
 
 	var timeline []model.TimelineItem
 	if err := r.db.Select(&timeline, query); err != nil {
@@ -103,7 +103,7 @@ func (r *TimelineMysqlRepo) GetUserOwn(userId string) ([]model.TimelineItem, err
 	WHERE
 		u.id = %s AND (t.type!='ACCEPT_CHALLENGE' OR p.user_id != c.author_id)
 	ORDER BY t.created DESC
-	`, selectBaseTimeline(), userId)
+	`, selectBaseTimelineQuery(), userId)
 
 	var timeline []model.TimelineItem
 	if err := r.db.Select(&timeline, query); err != nil {
@@ -114,7 +114,7 @@ func (r *TimelineMysqlRepo) GetUserOwn(userId string) ([]model.TimelineItem, err
 	return timeline, nil
 }
 
-func selectBaseTimeline() string {
+func selectBaseTimelineQuery() string {
 	query := fmt.Sprintf(`
 	SELECT 
 		t.*,
