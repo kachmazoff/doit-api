@@ -37,13 +37,7 @@ func (r *TimelineMysqlRepo) GetAll() ([]model.TimelineItem, error) {
 	ORDER BY t.created DESC
 	`, selectBaseTimelineQuery())
 
-	var timeline []model.TimelineItem
-	if err := r.db.Select(&timeline, query); err != nil {
-		println(err.Error())
-		return []model.TimelineItem{}, err
-	}
-
-	return timeline, nil
+	return r.selectTimeline(query)
 }
 
 func (r *TimelineMysqlRepo) GetCommon() ([]model.TimelineItem, error) {
@@ -62,13 +56,7 @@ func (r *TimelineMysqlRepo) GetCommon() ([]model.TimelineItem, error) {
 	ORDER BY t.created DESC
 	`, selectBaseTimelineQuery())
 
-	var timeline []model.TimelineItem
-	if err := r.db.Select(&timeline, query); err != nil {
-		println(err.Error())
-		return []model.TimelineItem{}, err
-	}
-
-	return timeline, nil
+	return r.selectTimeline(query)
 }
 
 func (r *TimelineMysqlRepo) GetForUser(userId string) ([]model.TimelineItem, error) {
@@ -88,25 +76,23 @@ func (r *TimelineMysqlRepo) GetForUser(userId string) ([]model.TimelineItem, err
 	ORDER BY t.created DESC
 	`, selectBaseTimelineQuery(), selectFolloweesQuery(userId))
 
-	var timeline []model.TimelineItem
-	if err := r.db.Select(&timeline, query); err != nil {
-		println(err.Error())
-		return []model.TimelineItem{}, err
-	}
-
-	return timeline, nil
+	return r.selectTimeline(query)
 }
 
 func (r *TimelineMysqlRepo) GetUserOwn(userId string) ([]model.TimelineItem, error) {
 	query := fmt.Sprintf(`
 	%s
 	WHERE
-		u.id = %s AND (t.type!='ACCEPT_CHALLENGE' OR p.user_id != c.author_id)
+		u.id=? AND (t.type!='ACCEPT_CHALLENGE' OR p.user_id != c.author_id)
 	ORDER BY t.created DESC
-	`, selectBaseTimelineQuery(), userId)
+	`, selectBaseTimelineQuery())
 
+	return r.selectTimeline(query, userId)
+}
+
+func (r *TimelineMysqlRepo) selectTimeline(query string, args ...interface{}) ([]model.TimelineItem, error) {
 	var timeline []model.TimelineItem
-	if err := r.db.Select(&timeline, query); err != nil {
+	if err := r.db.Select(&timeline, query, args...); err != nil {
 		println(err.Error())
 		return []model.TimelineItem{}, err
 	}
