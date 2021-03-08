@@ -21,12 +21,15 @@ type Timeline interface {
 	// TODO: Remove later. Temp method
 	GetAll() ([]model.TimelineItem, error)
 	GetCommon() ([]model.TimelineItem, error)
+	GetForUser(userId string) ([]model.TimelineItem, error)
+	GetUserOwn(userId string) ([]model.TimelineItem, error)
 }
 
 type Participants interface {
 	Create(participant model.Participant) (string, error)
 	GetById(id string) (model.Participant, error)
 	GetActivePublicParticipantsOfUser(userId string) ([]model.Participant, error)
+	GetActivePublicParticipantsInChallenge(challengeId string) ([]model.Participant, error)
 }
 
 type Notes interface {

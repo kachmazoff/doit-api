@@ -50,3 +50,14 @@ func (r *ParticipantsMysqlRepo) GetActivePublicParticipantsOfUser(userId string)
 
 	return participants, nil
 }
+
+func (r *ParticipantsMysqlRepo) GetActivePublicParticipantsInChallenge(challengeId string) ([]model.Participant, error) {
+	query := fmt.Sprintf("SELECT * FROM %s WHERE challenge_id=? AND status='in_progress' AND visible_type='public' ORDER BY created DESC", participantsTable)
+
+	var participants []model.Participant
+	if err := r.db.Select(&participants, query); err != nil {
+		return []model.Participant{}, err
+	}
+
+	return participants, nil
+}
