@@ -32,7 +32,9 @@ type Participants interface {
 }
 
 type Notes interface {
+	Create(note model.Note) (string, error)
 	GetById(id string) (model.Note, error)
+	GetNotesOfParticipant(participantId string) ([]model.Note, error)
 	Anonymize(*model.Note) bool
 }
 

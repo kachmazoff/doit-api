@@ -15,6 +15,10 @@ func NewNotesService(repo repository.Notes) *NotesService {
 	}
 }
 
+func (s *NotesService) Create(note model.Note) (string, error) {
+	return s.repo.Create(note)
+}
+
 func (s *NotesService) GetById(id string) (model.Note, error) {
 	note, err := s.repo.GetById(id)
 
@@ -25,6 +29,20 @@ func (s *NotesService) GetById(id string) (model.Note, error) {
 	s.Anonymize(&note)
 
 	return note, nil
+}
+
+func (s *NotesService) GetNotesOfParticipant(participantId string) ([]model.Note, error) {
+	notes, err := s.repo.GetNotesOfParticipant(participantId)
+
+	if err != nil {
+		return []model.Note{}, err
+	}
+
+	for i := 0; i < len(notes); i++ {
+		s.Anonymize(&notes[i])
+	}
+
+	return notes, nil
 }
 
 func (s *NotesService) Anonymize(note *model.Note) bool {
