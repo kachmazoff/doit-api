@@ -93,6 +93,14 @@ func (s *TimelineService) EnrichItem(timelineItem *model.TimelineItem) error {
 	return nil
 }
 
+func (s *TimelineService) Anonymize(timeline *[]model.TimelineItem) bool {
+	isAnonym := false
+	for i := 0; i < len(*timeline); i++ {
+		isAnonym = isAnonym || s.AnonymizeItem(&(*timeline)[i])
+	}
+	return isAnonym
+}
+
 func (s *TimelineService) AnonymizeItem(timelineItem *model.TimelineItem) bool {
 	isAnonym := false
 
@@ -108,6 +116,19 @@ func (s *TimelineService) AnonymizeItem(timelineItem *model.TimelineItem) bool {
 	}
 
 	return isAnonym
+}
+
+func (s *TimelineService) GetForUser(userId string) ([]model.TimelineItem, error) {
+	timeline, err := s.repo.GetForUser(userId)
+	if err != nil {
+		return []model.TimelineItem{}, err
+	}
+	s.Anonymize(&timeline)
+	return timeline, nil
+}
+
+func (s *TimelineService) GetUserOwn(userId string) ([]model.TimelineItem, error) {
+	return s.repo.GetUserOwn(userId)
 }
 
 func print(timelineItem model.TimelineItem) {
