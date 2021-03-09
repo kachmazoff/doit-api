@@ -24,7 +24,10 @@ type Timeline interface {
 }
 
 type Participants interface {
+	Create(participant model.Participant) (string, error)
 	GetById(id string) (model.Participant, error)
+	GetParticipationsOfUser(userId string, onlyPublic, onlyActive bool) ([]model.Participant, error)
+	GetParticipantsInChallenge(challengeId string, onlyPublic, onlyActive bool) ([]model.Participant, error)
 	Anonymize(*model.Participant) bool
 }
 

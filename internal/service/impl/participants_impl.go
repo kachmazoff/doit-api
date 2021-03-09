@@ -15,6 +15,10 @@ func NewParticipantsService(repo repository.Participants) *ParticipantsService {
 	}
 }
 
+func (s *ParticipantsService) Create(participant model.Participant) (string, error) {
+	return s.repo.Create(participant)
+}
+
 func (s *ParticipantsService) GetById(id string) (model.Participant, error) {
 	participant, err := s.repo.GetById(id)
 
@@ -25,6 +29,24 @@ func (s *ParticipantsService) GetById(id string) (model.Participant, error) {
 	s.Anonymize(&participant)
 
 	return participant, nil
+}
+
+func (s *ParticipantsService) GetParticipationsOfUser(userId string, onlyPublic, onlyActive bool) ([]model.Participant, error) {
+	return s.repo.GetParticipationsOfUser(userId, onlyPublic, onlyActive)
+}
+
+func (s *ParticipantsService) GetParticipantsInChallenge(challengeId string, onlyPublic, onlyActive bool) ([]model.Participant, error) {
+	participants, err := s.repo.GetParticipantsInChallenge(challengeId, onlyPublic, onlyActive)
+
+	if err != nil {
+		return []model.Participant{}, err
+	}
+
+	for i := 0; i < len(participants); i++ {
+		s.Anonymize(&participants[i])
+	}
+
+	return participants, nil
 }
 
 func (s *ParticipantsService) Anonymize(participant *model.Participant) bool {
