@@ -39,7 +39,11 @@ type Notes interface {
 }
 
 type Suggestions interface {
+	Create(suggestion model.Suggestion) (string, error)
 	GetById(id string) (model.Suggestion, error)
+	GetForParticipant(participantId string) ([]model.Suggestion, error)
+	GetByAuthor(authorId string, onlyPublic bool) ([]model.Suggestion, error)
+	GetForUser(userId string) ([]model.Suggestion, error)
 	Anonymize(*model.Suggestion) bool
 }
 
