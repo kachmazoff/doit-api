@@ -40,11 +40,36 @@ func (r *ParticipantsMysqlRepo) Create(participant model.Participant) (string, e
 	return generatedId, nil
 }
 
-func (r *ParticipantsMysqlRepo) GetActivePublicParticipantsOfUser(userId string) ([]model.Participant, error) {
-	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id=? AND status='in_progress' AND anonymous=false AND visible_type='public' ORDER BY created DESC", participantsTable)
+// TODO: Выдавать только то, к чему есть доступ? (join по challenge_id, challenge.visible_type='public')
+func (r *ParticipantsMysqlRepo) GetParticipationsOfUser(userId string, onlyPublic bool, onlyActive bool) ([]model.Participant, error) {
+	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id=?", participantsTable)
+	if onlyActive {
+		query += " AND status='in_progress'"
+	}
+	if onlyPublic {
+		query += " AND anonymous=false AND visible_type='public'"
+	}
+	query += " ORDER BY created DESC"
 
+	return r.selectParticipants(query)
+}
+
+func (r *ParticipantsMysqlRepo) GetParticipantsInChallenge(challengeId string, onlyPublic, onlyActive bool) ([]model.Participant, error) {
+	query := fmt.Sprintf("SELECT * FROM %s WHERE challenge_id=?", participantsTable)
+	if onlyActive {
+		query += " AND status='in_progress'"
+	}
+	if onlyPublic {
+		query += " AND visible_type='public'"
+	}
+	query += " ORDER BY created DESC"
+
+	return r.selectParticipants(query)
+}
+
+func (r *ParticipantsMysqlRepo) selectParticipants(query string, args ...interface{}) ([]model.Participant, error) {
 	var participants []model.Participant
-	if err := r.db.Select(&participants, query); err != nil {
+	if err := r.db.Select(&participants, query, args...); err != nil {
 		return []model.Participant{}, err
 	}
 

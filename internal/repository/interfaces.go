@@ -21,12 +21,15 @@ type Timeline interface {
 	// TODO: Remove later. Temp method
 	GetAll() ([]model.TimelineItem, error)
 	GetCommon() ([]model.TimelineItem, error)
+	GetForUser(userId string) ([]model.TimelineItem, error)
+	GetUserOwn(userId string) ([]model.TimelineItem, error)
 }
 
 type Participants interface {
 	Create(participant model.Participant) (string, error)
 	GetById(id string) (model.Participant, error)
-	GetActivePublicParticipantsOfUser(userId string) ([]model.Participant, error)
+	GetParticipationsOfUser(userId string, onlyPublic, onlyActive bool) ([]model.Participant, error)
+	GetParticipantsInChallenge(challengeId string, onlyPublic, onlyActive bool) ([]model.Participant, error)
 }
 
 type Notes interface {
@@ -36,7 +39,11 @@ type Notes interface {
 }
 
 type Suggestions interface {
+	Create(suggestion model.Suggestion) (string, error)
 	GetById(id string) (model.Suggestion, error)
+	GetForParticipant(participantId string) ([]model.Suggestion, error)
+	GetByAuthor(authorId string, onlyPublic bool) ([]model.Suggestion, error)
+	GetForUser(userId string) ([]model.Suggestion, error)
 }
 
 type Followers interface {

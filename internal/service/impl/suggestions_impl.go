@@ -15,6 +15,10 @@ func NewSuggestionsService(repo repository.Suggestions) *SuggestionsService {
 	}
 }
 
+func (s *SuggestionsService) Create(suggestion model.Suggestion) (string, error) {
+	return s.repo.Create(suggestion)
+}
+
 func (s *SuggestionsService) GetById(id string) (model.Suggestion, error) {
 	suggestion, err := s.repo.GetById(id)
 
@@ -27,6 +31,18 @@ func (s *SuggestionsService) GetById(id string) (model.Suggestion, error) {
 	return suggestion, nil
 }
 
+func (s *SuggestionsService) GetForParticipant(participantId string) ([]model.Suggestion, error) {
+	return s.defaultAnonymizedResponse(s.repo.GetForParticipant(participantId))
+}
+
+func (s *SuggestionsService) GetByAuthor(authorId string, onlyPublic bool) ([]model.Suggestion, error) {
+	return s.repo.GetByAuthor(authorId, onlyPublic)
+}
+
+func (s *SuggestionsService) GetForUser(userId string) ([]model.Suggestion, error) {
+	return s.defaultAnonymizedResponse(s.repo.GetForUser(userId))
+}
+
 func (s *SuggestionsService) Anonymize(suggestion *model.Suggestion) bool {
 	isAnonym := false
 
@@ -36,4 +52,16 @@ func (s *SuggestionsService) Anonymize(suggestion *model.Suggestion) bool {
 	}
 
 	return isAnonym
+}
+
+func (s *SuggestionsService) defaultAnonymizedResponse(suggestions []model.Suggestion, err error) ([]model.Suggestion, error) {
+	if err != nil {
+		return []model.Suggestion{}, err
+	}
+
+	for i := 0; i < len(suggestions); i++ {
+		s.Anonymize(&suggestions[i])
+	}
+
+	return suggestions, nil
 }
