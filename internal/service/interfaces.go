@@ -45,6 +45,7 @@ type Suggestions interface {
 	Create(suggestion model.Suggestion) (string, error)
 	GetById(id string) (model.Suggestion, error)
 	GetForParticipant(participantId string) ([]model.Suggestion, error)
+	// TODO: подумать над тем, как корректно объявить api-эндпоинты для этого и следующего метода
 	GetByAuthor(authorId string, onlyPublic bool) ([]model.Suggestion, error)
 	GetForUser(userId string) ([]model.Suggestion, error)
 	Anonymize(*model.Suggestion) bool

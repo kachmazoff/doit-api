@@ -13,6 +13,7 @@ func (h *Controller) initParticipantsRoutes(api *gin.RouterGroup) {
 		participants.POST("/", h.userIdentity, h.createParticipant)
 		participant := participants.Group("/:participantId")
 		h.initNotesRoutes(participant)
+		h.initSuggestionsRoutes(participant)
 	}
 }
 
