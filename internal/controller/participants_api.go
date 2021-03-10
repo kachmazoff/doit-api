@@ -11,6 +11,8 @@ func (h *Controller) initParticipantsRoutes(api *gin.RouterGroup) {
 	participants := api.Group("/participants")
 	{
 		participants.POST("/", h.userIdentity, h.createParticipant)
+		participant := participants.Group("/:participantId")
+		h.initNotesRoutes(participant)
 	}
 }
 
