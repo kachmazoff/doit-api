@@ -58,7 +58,7 @@ func (s *ParticipantsService) HasRootAccess(participantId, userId string) bool {
 	return participant.UserId == userId
 }
 
-func (s *ParticipantsService) IsOpen(participantId string) bool {
+func (s *ParticipantsService) IsPublic(participantId string) bool {
 	participant, err := s.GetById(participantId)
 	return err == nil && participant.VisibleType == "public"
 }
