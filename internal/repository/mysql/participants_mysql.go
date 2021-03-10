@@ -51,7 +51,7 @@ func (r *ParticipantsMysqlRepo) GetParticipationsOfUser(userId string, onlyPubli
 	}
 	query += " ORDER BY created DESC"
 
-	return r.selectParticipants(query)
+	return r.selectParticipants(query, userId)
 }
 
 func (r *ParticipantsMysqlRepo) GetParticipantsInChallenge(challengeId string, onlyPublic, onlyActive bool) ([]model.Participant, error) {
@@ -64,13 +64,17 @@ func (r *ParticipantsMysqlRepo) GetParticipantsInChallenge(challengeId string, o
 	}
 	query += " ORDER BY created DESC"
 
-	return r.selectParticipants(query)
+	return r.selectParticipants(query, challengeId)
 }
 
 func (r *ParticipantsMysqlRepo) selectParticipants(query string, args ...interface{}) ([]model.Participant, error) {
 	var participants []model.Participant
 	if err := r.db.Select(&participants, query, args...); err != nil {
 		return []model.Participant{}, err
+	}
+
+	if participants == nil {
+		participants = []model.Participant{}
 	}
 
 	return participants, nil
