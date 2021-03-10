@@ -1,17 +1,143 @@
-basePath: /api/v1/
-host: localhost:8000
+basePath: /api/
+definitions:
+  model.Participant:
+    properties:
+      anonymous:
+        type: boolean
+      challenge_id:
+        type: string
+      created:
+        type: string
+      end_date:
+        type: string
+      id:
+        type: string
+      status:
+        type: string
+      team_id:
+        type: string
+      user_id:
+        type: string
+      visible_type:
+        type: string
+    type: object
+  model.User:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8080
 info:
   contact: {}
-  description: API Server for Course Platform
-  title: Course Platform API
+  description: API Server for Doit App
+  title: Doit API
   version: "1.0"
-paths: {}
+paths:
+  /users/{username}:
+    get:
+      consumes:
+      - application/json
+      description: Get user info by username
+      parameters:
+      - description: username пользователя
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+      summary: Get user info
+      tags:
+      - users
+  /users/{username}/followees:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка пользователей, на которых он подписан
+      parameters:
+      - description: username пользователя
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+      summary: Get user's followees
+      tags:
+      - users
+      - followers
+  /users/{username}/followers:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка пользователей, которые подписанны на данного пользователя
+      parameters:
+      - description: username пользователя
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+      summary: Get user's followers
+      tags:
+      - users
+      - followers
+  /users/{username}/participants:
+    get:
+      consumes:
+      - application/json
+      description: Get participations of user by username
+      parameters:
+      - description: username пользователя
+        in: path
+        name: username
+        required: true
+        type: string
+      - description: status для фильтраций
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Participant'
+            type: array
+      security:
+      - Auth: []
+      summary: Get user's participations
+      tags:
+      - users
+      - participants
 securityDefinitions:
-  AdminAuth:
-    in: header
-    name: Authorization
-    type: apiKey
-  StudentsAuth:
+  Auth:
     in: header
     name: Authorization
     type: apiKey

@@ -47,6 +47,8 @@ func (h *Controller) getToken(c *gin.Context) {
 		return
 	}
 
+	// TODO: need update...
+
 	token, err := h.tokenManager.NewJWT(input["id"].(string), time.Hour)
 
 	commonJSONResponse(c, map[string]interface{}{
