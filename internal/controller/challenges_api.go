@@ -23,6 +23,9 @@ func (h *Controller) createChallenge(c *gin.Context) {
 		return
 	}
 
+	currentUser, _ := getUserId(c)
+	input.AuthorId = currentUser
+
 	id, err := h.services.Challenges.Create(input)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, err)
