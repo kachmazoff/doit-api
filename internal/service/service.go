@@ -13,6 +13,7 @@ type Services struct {
 	Notes
 	Suggestions
 	Timeline
+	Followers
 }
 
 func NewServices(r *repository.Repositories, sender mailing.Sender) *Services {
@@ -24,6 +25,8 @@ func NewServices(r *repository.Repositories, sender mailing.Sender) *Services {
 
 	timeline := impl.NewTimelineService(r.Timeline, *challenges, *notes, *participants, *suggestions)
 
+	followers := impl.NewFollowersService(r.Followers)
+
 	return &Services{
 		Users:        users,
 		Challenges:   challenges,
@@ -31,5 +34,6 @@ func NewServices(r *repository.Repositories, sender mailing.Sender) *Services {
 		Notes:        notes,
 		Suggestions:  suggestions,
 		Timeline:     timeline,
+		Followers:    followers,
 	}
 }
