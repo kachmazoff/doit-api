@@ -31,14 +31,14 @@ func (s *NotesService) GetById(id string) (model.Note, error) {
 	return note, nil
 }
 
-func (s *NotesService) GetNotesOfParticipant(participantId string) ([]model.Note, error) {
+func (s *NotesService) GetNotesOfParticipant(participantId string, needAnonymize bool) ([]model.Note, error) {
 	notes, err := s.repo.GetNotesOfParticipant(participantId)
 
 	if err != nil {
 		return []model.Note{}, err
 	}
 
-	for i := 0; i < len(notes); i++ {
+	for i := 0; i < len(notes) && needAnonymize; i++ {
 		s.Anonymize(&notes[i])
 	}
 

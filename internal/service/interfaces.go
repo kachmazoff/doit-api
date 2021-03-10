@@ -28,14 +28,15 @@ type Participants interface {
 	GetById(id string) (model.Participant, error)
 	GetParticipationsOfUser(userId string, onlyPublic, onlyActive bool) ([]model.Participant, error)
 	GetParticipantsInChallenge(challengeId string, onlyPublic, onlyActive bool) ([]model.Participant, error)
-	IsParticipant(participantId, userId string) bool
+	HasRootAccess(participantId, userId string) bool
+	IsPublic(participantId string) bool
 	Anonymize(*model.Participant) bool
 }
 
 type Notes interface {
 	Create(note model.Note) (string, error)
 	GetById(id string) (model.Note, error)
-	GetNotesOfParticipant(participantId string) ([]model.Note, error)
+	GetNotesOfParticipant(participantId string, needAnonymize bool) ([]model.Note, error)
 	Anonymize(*model.Note) bool
 }
 
