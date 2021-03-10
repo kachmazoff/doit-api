@@ -1,11 +1,6 @@
 package controller
 
-import (
-	"net/http"
-
-	"github.com/gin-gonic/gin"
-	"github.com/kachmazoff/doit-api/internal/model"
-)
+import "github.com/gin-gonic/gin"
 
 func (h *Controller) initTimelineRoutes(api *gin.RouterGroup) {
 	timeline := api.Group("/timeline")
@@ -18,27 +13,17 @@ func (h *Controller) initTimelineRoutes(api *gin.RouterGroup) {
 
 func (h *Controller) getAll(c *gin.Context) {
 	timeline, err := h.services.Timeline.GetCommon()
-
-	timelineResponse(c, timeline, err)
+	commonJSONResponse(c, timeline, err)
 }
 
 func (h *Controller) getPersonalizedTimeline(c *gin.Context) {
 	currentUser, _ := getUserId(c)
 	timeline, err := h.services.Timeline.GetForUser(currentUser)
-	timelineResponse(c, timeline, err)
+	commonJSONResponse(c, timeline, err)
 }
 
 func (h *Controller) getOwnTimeline(c *gin.Context) {
 	currentUser, _ := getUserId(c)
 	timeline, err := h.services.Timeline.GetUserOwn(currentUser)
-	timelineResponse(c, timeline, err)
-}
-
-func timelineResponse(c *gin.Context, timeline []model.TimelineItem, err error) {
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, createMessage(err.Error()))
-		return
-	}
-
-	c.JSON(http.StatusOK, timeline)
+	commonJSONResponse(c, timeline, err)
 }

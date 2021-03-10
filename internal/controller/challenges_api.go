@@ -32,24 +32,14 @@ func (h *Controller) createChallenge(c *gin.Context) {
 
 func (h *Controller) getAllChallenges(c *gin.Context) {
 	challenges, err := h.services.Challenges.GetAll()
-
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, createMessage(err.Error()))
-		return
-	}
-
-	c.JSON(http.StatusOK, challenges)
+	commonJSONResponse(c, challenges, err)
 }
 
 func (h *Controller) getParticipantsByChallenge(c *gin.Context) {
 	challengeId := c.Param("challengeId")
 
 	status := c.Query("status")
-
-	participants, err := h.services.Participants.GetParticipantsInChallenge(challengeId, true, status == "active")
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, createMessage(err.Error()))
-		return
-	}
-	c.JSON(http.StatusOK, participants)
+	onlyActive := status == "active"
+	participants, err := h.services.Participants.GetParticipantsInChallenge(challengeId, true, onlyActive)
+	commonJSONResponse(c, participants, err)
 }

@@ -55,10 +55,5 @@ func (h *Controller) getUserParticipations(c *gin.Context) {
 	}
 
 	participations, err := h.services.Participants.GetParticipationsOfUser(user.Id, onlyPublic, status == "active")
-
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, createMessage(err.Error()))
-		return
-	}
-	c.JSON(http.StatusOK, participations)
+	commonJSONResponse(c, participations, err)
 }

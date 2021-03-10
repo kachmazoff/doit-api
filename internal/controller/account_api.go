@@ -37,12 +37,7 @@ func (h *Controller) activateAccount(c *gin.Context) {
 	}
 
 	err := h.services.Users.ConfirmAccount(userId)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, err)
-		return
-	}
-
-	c.JSON(http.StatusOK, createMessage("Account activated successfully"))
+	commonJSONResponse(c, createMessage("Account activated successfully"), err)
 }
 
 func (h *Controller) getToken(c *gin.Context) {
@@ -53,12 +48,8 @@ func (h *Controller) getToken(c *gin.Context) {
 	}
 
 	token, err := h.tokenManager.NewJWT(input["id"].(string), time.Hour)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, createMessage(err.Error()))
-		return
-	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
+	commonJSONResponse(c, map[string]interface{}{
 		"token": token,
-	})
+	}, err)
 }
