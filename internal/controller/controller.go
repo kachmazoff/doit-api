@@ -34,6 +34,7 @@ func (h *Controller) InitRoutes() *gin.Engine {
 		h.initAccountRoutes(api)
 		h.initChallengesRoutes(api)
 		h.initTimelineRoutes(api)
+		h.initFollowersRoutes(api)
 	}
 
 	return router
