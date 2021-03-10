@@ -52,6 +52,18 @@ func (r *UsersMysqlRepo) SetStatus(id string, status string) error {
 	return nil
 }
 
+func (r *UsersMysqlRepo) GetIdByUsername(username string) (string, error) {
+	query := fmt.Sprintf("SELECT id FROM %s WHERE username=? LIMIT 1", usersTable)
+
+	var id string
+	if err := r.db.Get(&id, query, username); err != nil {
+		println(err.Error())
+		return "", err
+	}
+
+	return id, nil
+}
+
 func (r *UsersMysqlRepo) GetEmailById(id string) (string, error) {
 	query := fmt.Sprintf("SELECT email FROM %s WHERE id=? LIMIT 1", usersTable)
 
