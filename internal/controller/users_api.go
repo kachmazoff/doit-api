@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"database/sql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -24,14 +23,7 @@ func (h *Controller) getUser(c *gin.Context) {
 	}
 
 	user, err := h.services.Users.GetByUsername(username)
-
-	if err != nil {
-		if err == sql.ErrNoRows {
-			c.AbortWithStatusJSON(http.StatusNotFound, createMessage("This user does not exist"))
-			return
-		}
-
-		c.AbortWithStatusJSON(http.StatusInternalServerError, err)
+	if handleUserFindError(c, err) {
 		return
 	}
 
@@ -49,14 +41,7 @@ func (h *Controller) getUserParticipations(c *gin.Context) {
 	}
 
 	user, err := h.services.Users.GetByUsername(username)
-
-	if err != nil {
-		if err == sql.ErrNoRows {
-			c.AbortWithStatusJSON(http.StatusNotFound, createMessage("This user does not exist"))
-			return
-		}
-
-		c.AbortWithStatusJSON(http.StatusInternalServerError, err)
+	if handleUserFindError(c, err) {
 		return
 	}
 

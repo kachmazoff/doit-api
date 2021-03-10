@@ -25,14 +25,7 @@ func (h *Controller) registerUser(c *gin.Context) {
 	}
 
 	id, err := h.services.Users.Create(input)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, err)
-		return
-	}
-
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"id": id,
-	})
+	handleCreation(c, id, err)
 }
 
 func (h *Controller) activateAccount(c *gin.Context) {

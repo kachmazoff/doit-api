@@ -22,12 +22,5 @@ func (h *Controller) createParticipant(c *gin.Context) {
 	}
 
 	id, err := h.services.Participants.Create(input)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, err)
-		return
-	}
-
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"id": id,
-	})
+	handleCreation(c, id, err)
 }
