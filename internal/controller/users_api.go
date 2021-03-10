@@ -5,25 +5,14 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/kachmazoff/doit-api/internal/model"
 )
 
-func (h *Controller) registerUser(c *gin.Context) {
-	var input model.User
-	if err := c.BindJSON(&input); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, err)
-		return
+func (h *Controller) initUsersRoutes(api *gin.RouterGroup) {
+	users := api.Group("/users")
+	{
+		users.GET("/", h.getUser)
+		users.GET("/:username/participants", h.optionalUserIdentity, h.getUserParticipations)
 	}
-
-	id, err := h.services.Users.Create(input)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, err)
-		return
-	}
-
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"id": id,
-	})
 }
 
 func (h *Controller) getUser(c *gin.Context) {
@@ -49,19 +38,42 @@ func (h *Controller) getUser(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-func (h *Controller) activateAccount(c *gin.Context) {
-	userId := c.Query("id")
+func (h *Controller) getUserParticipations(c *gin.Context) {
+	username := c.Param("username")
+	status := c.Query("status")
 
-	if userId == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, createMessage("Bad request"))
+	// TODO: check. Может ли такое быть вообще?
+	if username == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, createMessage("Bad request. Username not defined"))
 		return
 	}
 
-	err := h.services.Users.ConfirmAccount(userId)
+	user, err := h.services.Users.GetByUsername(username)
+
 	if err != nil {
+		if err == sql.ErrNoRows {
+			c.AbortWithStatusJSON(http.StatusNotFound, createMessage("This user does not exist"))
+			return
+		}
+
 		c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, createMessage("Account activated successfully"))
+	currentUser, err := getUserId(c)
+	var onlyPublic bool
+
+	if err != nil {
+		onlyPublic = true
+	} else {
+		onlyPublic = currentUser != user.Id
+	}
+
+	participations, err := h.services.Participants.GetParticipationsOfUser(user.Id, onlyPublic, status == "active")
+
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, createMessage(err.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, participations)
 }

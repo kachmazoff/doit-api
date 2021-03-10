@@ -12,6 +12,7 @@ func (h *Controller) initChallengesRoutes(api *gin.RouterGroup) {
 	{
 		courses.GET("/", h.getAllChallenges)
 		courses.POST("/", h.userIdentity, h.createChallenge)
+		courses.GET("/:challengeId", h.getAllChallenges)
 	}
 }
 
@@ -42,4 +43,17 @@ func (h *Controller) getAllChallenges(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, challenges)
+}
+
+func (h *Controller) getParticipantsByChallenge(c *gin.Context) {
+	challengeId := c.Param("challengeId")
+
+	status := c.Query("status")
+
+	participants, err := h.services.Participants.GetParticipantsInChallenge(challengeId, true, status == "active")
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, createMessage(err.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, participants)
 }

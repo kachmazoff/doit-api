@@ -30,7 +30,7 @@ func (h *Controller) InitRoutes() *gin.Engine {
 
 	api := router.Group("/api")
 	{
-		api.GET("/user", h.getUser)
+		h.initUsersRoutes(api)
 		h.initAccountRoutes(api)
 		h.initChallengesRoutes(api)
 		h.initTimelineRoutes(api)
