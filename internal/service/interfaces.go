@@ -28,6 +28,7 @@ type Participants interface {
 	GetById(id string) (model.Participant, error)
 	GetParticipationsOfUser(userId string, onlyPublic, onlyActive bool) ([]model.Participant, error)
 	GetParticipantsInChallenge(challengeId string, onlyPublic, onlyActive bool) ([]model.Participant, error)
+	IsParticipant(participantId, userId string) bool
 	Anonymize(*model.Participant) bool
 }
 
