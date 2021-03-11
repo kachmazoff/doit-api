@@ -53,6 +53,10 @@ func (u *UsersService) ConfirmAccount(userId string) error {
 	return err
 }
 
+func (u *UsersService) GetIdByUsername(username string) (string, error) {
+	return u.repo.GetIdByUsername(username)
+}
+
 func (u *UsersService) GetByUsername(username string) (model.User, error) {
 	return u.repo.GetByUsername(username)
 }

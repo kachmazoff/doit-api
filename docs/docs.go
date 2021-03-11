@@ -23,14 +23,209 @@ var doc = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {},
-    "securityDefinitions": {
-        "AdminAuth": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
+    "paths": {
+        "/users/{username}": {
+            "get": {
+                "description": "Get user info by username",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get user info",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "username пользователя",
+                        "name": "username",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    }
+                }
+            }
         },
-        "StudentsAuth": {
+        "/users/{username}/followees": {
+            "get": {
+                "description": "Получение списка пользователей, на которых он подписан",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users",
+                    "followers"
+                ],
+                "summary": "Get user's followees",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "username пользователя",
+                        "name": "username",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.User"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{username}/followers": {
+            "get": {
+                "description": "Получение списка пользователей, которые подписанны на данного пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users",
+                    "followers"
+                ],
+                "summary": "Get user's followers",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "username пользователя",
+                        "name": "username",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.User"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{username}/participants": {
+            "get": {
+                "security": [
+                    {
+                        "Auth": []
+                    }
+                ],
+                "description": "Get participations of user by username",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users",
+                    "participants"
+                ],
+                "summary": "Get user's participations",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "username пользователя",
+                        "name": "username",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "status для фильтраций",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Participant"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.Participant": {
+            "type": "object",
+            "properties": {
+                "anonymous": {
+                    "type": "boolean"
+                },
+                "challenge_id": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "string"
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "team_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "visible_type": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.User": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "Auth": {
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"
@@ -50,11 +245,11 @@ type swaggerInfo struct {
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.0",
-	Host:        "localhost:8000",
-	BasePath:    "/api/v1/",
+	Host:        "localhost:8080",
+	BasePath:    "/api/",
 	Schemes:     []string{},
-	Title:       "Course Platform API",
-	Description: "API Server for Course Platform",
+	Title:       "Doit API",
+	Description: "API Server for Doit App",
 }
 
 type s struct{}

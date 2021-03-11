@@ -15,15 +15,21 @@ func NewChallengesService(repo repository.Challenges) *ChallengesService {
 	}
 }
 
-func (u *ChallengesService) Create(newChallenge model.Challenge) (string, error) {
-	const rootUserId string = "e3921905-9eb8-468a-8434-6b3b992a1987"
-	newChallenge.AuthorId = rootUserId
-
-	return u.repo.Create(newChallenge)
+func (s *ChallengesService) Create(newChallenge model.Challenge) (string, error) {
+	return s.repo.Create(newChallenge)
 }
 
-func (u *ChallengesService) GetAll() ([]model.Challenge, error) {
-	return u.repo.GetAll()
+func (s *ChallengesService) GetAll() ([]model.Challenge, error) {
+	challenges, err := s.repo.GetAll()
+	if err != nil {
+		return []model.Challenge{}, err
+	}
+
+	for i := 0; i < len(challenges); i++ {
+		s.Anonymize(&challenges[i])
+	}
+
+	return challenges, nil
 }
 
 func (s *ChallengesService) Anonymize(challenge *model.Challenge) bool {

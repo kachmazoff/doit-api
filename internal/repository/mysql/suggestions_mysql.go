@@ -62,6 +62,28 @@ func (r *SuggestionsMysqlRepo) GetForUser(userId string) ([]model.Suggestion, er
 	return r.selectSuggestions(query, userId)
 }
 
+// TODO
+// type Filters struct {
+// 	participantId string
+// 	authorId      string
+// 	onlyPublic    string
+// }
+
+// func (r *SuggestionsMysqlRepo) GetWithFilters(filters Filters) ([]model.Suggestion, error) {
+// 	query := fmt.Sprintf("SELECT * FROM %s", suggestionsTable)
+// 	needConditions := filters.participantId != "" || filters.authorId != "" || filters.onlyPublic != ""
+
+// 	if needConditions {
+// 		filtersCount := 0
+// 		if filters.participantId != "" {
+// 			filtersCount++
+
+// 		}
+
+// 	}
+// 	query += " ORDER BY created DESC"
+// }
+
 func (r *SuggestionsMysqlRepo) selectSuggestions(query string, args ...interface{}) ([]model.Suggestion, error) {
 	var suggestions []model.Suggestion
 	if err := r.db.Select(&suggestions, query, args...); err != nil {

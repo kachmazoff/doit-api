@@ -8,6 +8,7 @@ type Users interface {
 	GetByUsername(username string) (model.User, error)
 	SetStatus(id string, status string) error
 	GetEmailById(id string) (string, error)
+	GetIdByUsername(username string) (string, error)
 }
 
 type Challenges interface {

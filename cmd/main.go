@@ -17,18 +17,14 @@ import (
 	"github.com/kachmazoff/doit-api/internal/service"
 )
 
-// @title Course Platform API
+// @title Doit API
 // @version 1.0
-// @description API Server for Course Platform
+// @description API Server for Doit App
 
-// @host localhost:8000
-// @BasePath /api/v1/
+// @host localhost:8080
+// @BasePath /api/
 
-// @securityDefinitions.apikey AdminAuth
-// @in header
-// @name Authorization
-
-// @securityDefinitions.apikey StudentsAuth
+// @securityDefinitions.apikey Auth
 // @in header
 // @name Authorization
 

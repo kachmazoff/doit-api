@@ -49,6 +49,20 @@ func (s *ParticipantsService) GetParticipantsInChallenge(challengeId string, onl
 	return participants, nil
 }
 
+func (s *ParticipantsService) HasRootAccess(participantId, userId string) bool {
+	participant, err := s.GetById(participantId)
+	if err != nil {
+		return false
+	}
+	// TODO: check userId in team
+	return participant.UserId == userId
+}
+
+func (s *ParticipantsService) IsPublic(participantId string) bool {
+	participant, err := s.GetById(participantId)
+	return err == nil && participant.VisibleType == "public"
+}
+
 func (s *ParticipantsService) Anonymize(participant *model.Participant) bool {
 	isAnonym := false
 

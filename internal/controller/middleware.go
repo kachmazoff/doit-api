@@ -22,6 +22,13 @@ func (h *Controller) userIdentity(c *gin.Context) {
 	c.Set(userCtx, id)
 }
 
+func (h *Controller) optionalUserIdentity(c *gin.Context) {
+	id, err := h.parseAuthHeader(c)
+	if err == nil {
+		c.Set(userCtx, id)
+	}
+}
+
 func (h *Controller) parseAuthHeader(c *gin.Context) (string, error) {
 	header := c.GetHeader(authorizationHeader)
 	if header == "" {
