@@ -317,6 +317,108 @@
                 }
             }
         },
+        "/participants/{participantId}/notes": {
+            "get": {
+                "security": [
+                    {
+                        "Auth": []
+                    }
+                ],
+                "description": "Получение списка записей дневника участника челленджа. В зависимости от текущего пользователя, список может быть анонимизирован",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notes"
+                ],
+                "summary": "Get notes",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id участника",
+                        "name": "participantId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Note"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Auth": []
+                    }
+                ],
+                "description": "Создание новой записи в дневнике участника челленджа",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notes"
+                ],
+                "summary": "Create note",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id участника",
+                        "name": "participantId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Модель записи",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Note"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.IdResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/participants/{participantId}/suggestions": {
             "get": {
                 "description": "Получение списка предложений для участника",
@@ -804,6 +906,29 @@
                     "type": "string"
                 },
                 "visible_type": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Note": {
+            "type": "object",
+            "properties": {
+                "author_id": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "participant_id": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 }
             }

@@ -50,6 +50,21 @@ definitions:
       visible_type:
         type: string
     type: object
+  model.Note:
+    properties:
+      author_id:
+        type: string
+      body:
+        type: string
+      created:
+        type: string
+      id:
+        type: string
+      participant_id:
+        type: string
+      type:
+        type: string
+    type: object
   model.Participant:
     properties:
       anonymous:
@@ -346,6 +361,72 @@ paths:
       summary: Follow user
       tags:
       - followers
+  /participants/{participantId}/notes:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка записей дневника участника челленджа. В зависимости
+        от текущего пользователя, список может быть анонимизирован
+      parameters:
+      - description: Id участника
+        in: path
+        name: participantId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Note'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      security:
+      - Auth: []
+      summary: Get notes
+      tags:
+      - notes
+    post:
+      consumes:
+      - application/json
+      description: Создание новой записи в дневнике участника челленджа
+      parameters:
+      - description: Id участника
+        in: path
+        name: participantId
+        required: true
+        type: string
+      - description: Модель записи
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.Note'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.IdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "403":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      security:
+      - Auth: []
+      summary: Create note
+      tags:
+      - notes
   /participants/{participantId}/suggestions:
     get:
       consumes:
