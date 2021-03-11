@@ -17,7 +17,7 @@ func (h *Controller) initSuggestionsRoutes(api *gin.RouterGroup) {
 
 // @Summary Create suggestion
 // @Security Auth
-// @Tags suggestions, participants
+// @Tags suggestions
 // @Description Создание нового предложения для участника
 // @Accept json
 // @Produce json
@@ -50,7 +50,7 @@ func (h *Controller) createSuggestion(c *gin.Context) {
 }
 
 // @Summary Get suggestions
-// @Tags suggestions, participants
+// @Tags suggestions
 // @Description Получение списка предложений для участника
 // @Accept json
 // @Produce json

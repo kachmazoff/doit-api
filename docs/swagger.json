@@ -185,7 +185,6 @@
                     "application/json"
                 ],
                 "tags": [
-                    "challenges",
                     "participants"
                 ],
                 "summary": "Get challenge's participants",
@@ -230,7 +229,6 @@
                     "application/json"
                 ],
                 "tags": [
-                    "challenges",
                     "participants"
                 ],
                 "summary": "Create participant",
@@ -429,8 +427,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "suggestions",
-                    "participants"
+                    "suggestions"
                 ],
                 "summary": "Get suggestions",
                 "parameters": [
@@ -474,8 +471,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "suggestions",
-                    "participants"
+                    "suggestions"
                 ],
                 "summary": "Create suggestion",
                 "parameters": [
@@ -721,7 +717,6 @@
                     "application/json"
                 ],
                 "tags": [
-                    "users",
                     "followers"
                 ],
                 "summary": "Get user's followees",
@@ -757,7 +752,6 @@
                     "application/json"
                 ],
                 "tags": [
-                    "users",
                     "followers"
                 ],
                 "summary": "Get user's followers",
@@ -798,7 +792,6 @@
                     "application/json"
                 ],
                 "tags": [
-                    "users",
                     "participants"
                 ],
                 "summary": "Get user's participations",

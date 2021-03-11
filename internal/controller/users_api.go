@@ -43,7 +43,7 @@ func (h *Controller) getUser(c *gin.Context) {
 
 // @Summary Get user's participations
 // @Security Auth
-// @Tags users, participants
+// @Tags participants
 // @Description Get participations of user by username
 // @Accept json
 // @Produce json
@@ -79,7 +79,7 @@ func (h *Controller) getUserParticipations(c *gin.Context) {
 }
 
 // @Summary Get user's followees
-// @Tags users, followers
+// @Tags followers
 // @Description Получение списка пользователей, на которых он подписан
 // @Accept json
 // @Produce json
@@ -91,7 +91,7 @@ func (h *Controller) getFollowees(c *gin.Context) {
 }
 
 // @Summary Get user's followers
-// @Tags users, followers
+// @Tags followers
 // @Description Получение списка пользователей, которые подписанны на данного пользователя
 // @Accept json
 // @Produce json

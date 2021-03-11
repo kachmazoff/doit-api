@@ -53,7 +53,7 @@ func (h *Controller) getAllChallenges(c *gin.Context) {
 }
 
 // @Summary Get challenge's participants
-// @Tags challenges, participants
+// @Tags participants
 // @Description Получение списка участников в челлендже
 // @Accept json
 // @Produce json
@@ -72,7 +72,7 @@ func (h *Controller) getParticipantsByChallenge(c *gin.Context) {
 
 // @Summary Create participant
 // @Security Auth
-// @Tags challenges, participants
+// @Tags participants
 // @Description Создание нового участника (регистрация в челлендже в качестве участника)
 // @Accept json
 // @Produce json

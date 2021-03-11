@@ -200,7 +200,6 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "challenges",
                     "participants"
                 ],
                 "summary": "Get challenge's participants",
@@ -245,7 +244,6 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "challenges",
                     "participants"
                 ],
                 "summary": "Create participant",
@@ -444,8 +442,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "suggestions",
-                    "participants"
+                    "suggestions"
                 ],
                 "summary": "Get suggestions",
                 "parameters": [
@@ -489,8 +486,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "suggestions",
-                    "participants"
+                    "suggestions"
                 ],
                 "summary": "Create suggestion",
                 "parameters": [
@@ -736,7 +732,6 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users",
                     "followers"
                 ],
                 "summary": "Get user's followees",
@@ -772,7 +767,6 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users",
                     "followers"
                 ],
                 "summary": "Get user's followers",
@@ -813,7 +807,6 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users",
                     "participants"
                 ],
                 "summary": "Get user's participations",
