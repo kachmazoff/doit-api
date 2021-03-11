@@ -1,5 +1,36 @@
 basePath: /api/
 definitions:
+  dto.IdResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  dto.Login:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.MessageResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  dto.Registration:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.TokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
   model.Participant:
     properties:
       anonymous:
@@ -37,6 +68,73 @@ info:
   title: Doit API
   version: "1.0"
 paths:
+  /auth/activate:
+    post:
+      consumes:
+      - application/json
+      description: Активация нового аккаунта (подтверждение электронной почты)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      summary: Account activation
+      tags:
+      - auth
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Получение jwt-токена для дальнейшей работы с сервисом
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      summary: Login
+      tags:
+      - auth
+  /auth/registration:
+    post:
+      consumes:
+      - application/json
+      description: Создание нового пользователя
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Registration'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.IdResponse'
+      summary: Registration
+      tags:
+      - auth
   /users/{username}:
     get:
       consumes:

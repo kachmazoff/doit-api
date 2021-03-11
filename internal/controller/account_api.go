@@ -5,7 +5,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/kachmazoff/doit-api/internal/dto"
 	"github.com/kachmazoff/doit-api/internal/model"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func (h *Controller) initAccountRoutes(api *gin.RouterGroup) {
@@ -17,17 +19,38 @@ func (h *Controller) initAccountRoutes(api *gin.RouterGroup) {
 	}
 }
 
+// @Summary Registration
+// @Tags auth
+// @Description Создание нового пользователя
+// @Accept  json
+// @Produce  json
+// @Param input body dto.Registration true "Данные пользователя"
+// @Success 200 {object} dto.IdResponse
+// @Router /auth/registration [post]
 func (h *Controller) registerUser(c *gin.Context) {
-	var input model.User
+	var input dto.Registration
 	if err := c.BindJSON(&input); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, err)
 		return
 	}
 
-	id, err := h.services.Users.Create(input)
+	userModel := model.User{
+		Username: input.Username,
+		Email:    input.Email,
+		Password: input.Password,
+	}
+
+	id, err := h.services.Users.Create(userModel)
 	handleCreation(c, id, err)
 }
 
+// @Summary Account activation
+// @Tags auth
+// @Description Активация нового аккаунта (подтверждение электронной почты)
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} dto.MessageResponse
+// @Router /auth/activate [post]
 func (h *Controller) activateAccount(c *gin.Context) {
 	userId := c.Query("id")
 
@@ -40,18 +63,38 @@ func (h *Controller) activateAccount(c *gin.Context) {
 	commonJSONResponse(c, createMessage("Account activated successfully"), err)
 }
 
+// @Summary Login
+// @Tags auth
+// @Description Получение jwt-токена для дальнейшей работы с сервисом
+// @Accept  json
+// @Produce  json
+// @Param input body dto.Login true "Данные пользователя"
+// @Success 200 {object} dto.TokenResponse
+// @Failure 400,404 {object} dto.MessageResponse
+// @Router /auth/login [post]
 func (h *Controller) getToken(c *gin.Context) {
-	var input map[string]interface{}
+	var input dto.Login
 	if err := c.BindJSON(&input); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, err)
 		return
 	}
 
-	// TODO: need update...
+	user, err := h.services.Users.GetByEmail(input.Email)
 
-	token, err := h.tokenManager.NewJWT(input["id"].(string), time.Hour)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, createMessage("Пользователя с данным email не существует"))
+		return
+	}
 
-	commonJSONResponse(c, map[string]interface{}{
-		"token": token,
-	}, err)
+	password := []byte(input.Password)
+	hashedPassword, err := bcrypt.GenerateFromPassword(password, 6)
+
+	if string(hashedPassword) != user.Password {
+		c.AbortWithStatusJSON(http.StatusBadRequest, createMessage("Неверный пароль"))
+		return
+	}
+
+	token, err := h.tokenManager.NewJWT(user.Id, time.Hour)
+
+	commonJSONResponse(c, dto.TokenResponse{Token: token}, err)
 }
