@@ -88,6 +88,49 @@ definitions:
       participant_id:
         type: string
     type: object
+  model.TimelineItem:
+    properties:
+      anonymous:
+        type: boolean
+      author_id:
+        type: string
+      body:
+        type: string
+      challenge_id:
+        type: string
+      created:
+        type: string
+      created_note_id:
+        type: string
+      email:
+        type: string
+      end_date:
+        type: string
+      id:
+        type: string
+      index:
+        type: integer
+      participant_id:
+        type: string
+      participants_type:
+        type: string
+      show_author:
+        type: boolean
+      status:
+        type: string
+      team_id:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+      user_id:
+        type: string
+      username:
+        type: string
+      visible_type:
+        type: string
+    type: object
   model.User:
     properties:
       email:
@@ -368,6 +411,83 @@ paths:
       tags:
       - suggestions
       - participants
+  /timeline:
+    get:
+      consumes:
+      - application/json
+      description: Получение общего таймлайна
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.TimelineItem'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      summary: Get common timeline
+      tags:
+      - timeline
+  /timeline/own:
+    get:
+      consumes:
+      - application/json
+      description: Получение личного таймлайна. Состоит из личных событий текущего
+        пользователя (включая анонимные)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.TimelineItem'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "403":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      security:
+      - Auth: []
+      summary: Get own timeline
+      tags:
+      - timeline
+  /timeline/personalized:
+    get:
+      consumes:
+      - application/json
+      description: Получение персонализированного таймлайна. Состоит из событий тех
+        пользователей, на которых подписан текущий
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.TimelineItem'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "403":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      security:
+      - Auth: []
+      summary: Get personalized timeline
+      tags:
+      - timeline
   /unfollow:
     post:
       consumes:
