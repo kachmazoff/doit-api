@@ -45,8 +45,8 @@ func (h *Controller) getUser(c *gin.Context) {
 // @Security Auth
 // @Tags users, participants
 // @Description Get participations of user by username
-// @Accept  json
-// @Produce  json
+// @Accept json
+// @Produce json
 // @Param username path string true "username пользователя"
 // @Param status query string false "status для фильтраций"
 // @Success 200 {array} model.Participant

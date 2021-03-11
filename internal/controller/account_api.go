@@ -22,8 +22,8 @@ func (h *Controller) initAccountRoutes(api *gin.RouterGroup) {
 // @Summary Registration
 // @Tags auth
 // @Description Создание нового пользователя
-// @Accept  json
-// @Produce  json
+// @Accept json
+// @Produce json
 // @Param input body dto.Registration true "Данные пользователя"
 // @Success 200 {object} dto.IdResponse
 // @Router /auth/registration [post]
@@ -47,8 +47,8 @@ func (h *Controller) registerUser(c *gin.Context) {
 // @Summary Account activation
 // @Tags auth
 // @Description Активация нового аккаунта (подтверждение электронной почты)
-// @Accept  json
-// @Produce  json
+// @Accept json
+// @Produce json
 // @Success 200 {object} dto.MessageResponse
 // @Router /auth/activate [post]
 func (h *Controller) activateAccount(c *gin.Context) {
@@ -66,8 +66,8 @@ func (h *Controller) activateAccount(c *gin.Context) {
 // @Summary Login
 // @Tags auth
 // @Description Получение jwt-токена для дальнейшей работы с сервисом
-// @Accept  json
-// @Produce  json
+// @Accept json
+// @Produce json
 // @Param input body dto.Login true "Данные пользователя"
 // @Success 200 {object} dto.TokenResponse
 // @Failure 400,404 {object} dto.MessageResponse
