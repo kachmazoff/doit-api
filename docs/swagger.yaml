@@ -276,6 +276,33 @@ paths:
       tags:
       - challenges
       - participants
+  /follow:
+    post:
+      consumes:
+      - application/json
+      description: Подписка на пользователя
+      parameters:
+      - description: Id пользователя
+        in: query
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      security:
+      - Auth: []
+      summary: Follow user
+      tags:
+      - followers
   /participants/{participantId}/suggestions:
     get:
       consumes:
@@ -341,6 +368,33 @@ paths:
       tags:
       - suggestions
       - participants
+  /unfollow:
+    post:
+      consumes:
+      - application/json
+      description: Отписка от пользователя
+      parameters:
+      - description: Id пользователя
+        in: query
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      security:
+      - Auth: []
+      summary: Unfollow user
+      tags:
+      - followers
   /users/{username}:
     get:
       consumes:
