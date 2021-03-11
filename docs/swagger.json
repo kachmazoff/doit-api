@@ -215,6 +215,63 @@
                         }
                     }
                 }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Auth": []
+                    }
+                ],
+                "description": "Создание нового участника (регистрация в челлендже в качестве участника)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "challenges",
+                    "participants"
+                ],
+                "summary": "Create participant",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id челленджа",
+                        "name": "challengeId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Модель участника",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Participant"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.IdResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageResponse"
+                        }
+                    }
+                }
             }
         },
         "/participants/{participantId}/suggestions": {

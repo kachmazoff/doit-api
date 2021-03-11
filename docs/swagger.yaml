@@ -239,6 +239,43 @@ paths:
       tags:
       - challenges
       - participants
+    post:
+      consumes:
+      - application/json
+      description: Создание нового участника (регистрация в челлендже в качестве участника)
+      parameters:
+      - description: Id челленджа
+        in: path
+        name: challengeId
+        required: true
+        type: string
+      - description: Модель участника
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.Participant'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.IdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "403":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      security:
+      - Auth: []
+      summary: Create participant
+      tags:
+      - challenges
+      - participants
   /participants/{participantId}/suggestions:
     get:
       consumes:
