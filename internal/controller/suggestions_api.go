@@ -15,18 +15,29 @@ func (h *Controller) initSuggestionsRoutes(api *gin.RouterGroup) {
 	}
 }
 
+// @Summary Create suggestion
+// @Security Auth
+// @Tags suggestions, participants
+// @Description Создание нового предложения для участника
+// @Accept json
+// @Produce json
+// @Param participantId path string true "Id участника"
+// @Param input body model.Suggestion true "Модель предложения"
+// @Success 200 {object} dto.IdResponse
+// @Failure 400,403 {object} dto.MessageResponse
+// @Router /participants/{participantId}/suggestions [post]
 func (h *Controller) createSuggestion(c *gin.Context) {
 	currentUser, _ := getUserId(c)
 	participantId := c.Param("participantId")
 
 	if !h.services.Participants.IsPublic(participantId) {
-		c.AbortWithStatusJSON(http.StatusForbidden, "Вы не можете предлагать что-либо данному пользователю")
+		c.AbortWithStatusJSON(http.StatusForbidden, createMessage("Вы не можете предлагать что-либо данному пользователю"))
 		return
 	}
 
 	var input model.Suggestion
 	if err := c.BindJSON(&input); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, createMessage(err.Error()))
 		return
 	}
 
@@ -38,11 +49,20 @@ func (h *Controller) createSuggestion(c *gin.Context) {
 	handleCreation(c, id, err)
 }
 
+// @Summary Get suggestions
+// @Tags suggestions, participants
+// @Description Получение списка предложений для участника
+// @Accept json
+// @Produce json
+// @Param participantId path string true "Id участника"
+// @Success 200 {array} model.Suggestion
+// @Failure 404 {object} dto.MessageResponse
+// @Router /participants/{participantId}/suggestions [get]
 func (h *Controller) getSuggestionsForParticipant(c *gin.Context) {
 	participantId := c.Param("participantId")
-	// TODO: удалть проверку?
+
 	if participantId == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, createMessage("Participant is not defined"))
+		c.AbortWithStatusJSON(http.StatusNotFound, createMessage("Participant is not defined"))
 		return
 	}
 	suggestions, err := h.services.Suggestions.GetForParticipant(participantId)

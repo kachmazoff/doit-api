@@ -232,6 +232,105 @@ var doc = `{
                 }
             }
         },
+        "/participants/{participantId}/suggestions": {
+            "get": {
+                "description": "Получение списка предложений для участника",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "suggestions",
+                    "participants"
+                ],
+                "summary": "Get suggestions",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id участника",
+                        "name": "participantId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Suggestion"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Auth": []
+                    }
+                ],
+                "description": "Создание нового предложения для участника",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "suggestions",
+                    "participants"
+                ],
+                "summary": "Create suggestion",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id участника",
+                        "name": "participantId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Модель предложения",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Suggestion"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.IdResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MessageResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/users/{username}": {
             "get": {
                 "description": "Get user info by username",
@@ -491,6 +590,32 @@ var doc = `{
                     "type": "string"
                 },
                 "visible_type": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Suggestion": {
+            "type": "object",
+            "properties": {
+                "anonymous": {
+                    "type": "boolean"
+                },
+                "author_id": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "string"
+                },
+                "created_note_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "participant_id": {
                     "type": "string"
                 }
             }

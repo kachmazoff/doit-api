@@ -71,6 +71,23 @@ definitions:
       visible_type:
         type: string
     type: object
+  model.Suggestion:
+    properties:
+      anonymous:
+        type: boolean
+      author_id:
+        type: string
+      body:
+        type: string
+      created:
+        type: string
+      created_note_id:
+        type: string
+      id:
+        type: string
+      participant_id:
+        type: string
+    type: object
   model.User:
     properties:
       email:
@@ -221,6 +238,71 @@ paths:
       summary: Get challenge's participants
       tags:
       - challenges
+      - participants
+  /participants/{participantId}/suggestions:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка предложений для участника
+      parameters:
+      - description: Id участника
+        in: path
+        name: participantId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Suggestion'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      summary: Get suggestions
+      tags:
+      - suggestions
+      - participants
+    post:
+      consumes:
+      - application/json
+      description: Создание нового предложения для участника
+      parameters:
+      - description: Id участника
+        in: path
+        name: participantId
+        required: true
+        type: string
+      - description: Модель предложения
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.Suggestion'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.IdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "403":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      security:
+      - Auth: []
+      summary: Create suggestion
+      tags:
+      - suggestions
       - participants
   /users/{username}:
     get:
