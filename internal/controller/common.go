@@ -5,12 +5,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/kachmazoff/doit-api/internal/dto"
 )
 
-func createMessage(message string) map[string]interface{} {
-	return map[string]interface{}{
-		"message": message,
-	}
+func createMessage(message string) dto.MessageResponse {
+	return dto.MessageResponse{Message: message}
 }
 
 func commonJSONResponse(c *gin.Context, data interface{}, err error) {
@@ -23,9 +22,8 @@ func commonJSONResponse(c *gin.Context, data interface{}, err error) {
 }
 
 func handleCreation(c *gin.Context, id string, err error) {
-	commonJSONResponse(c, map[string]interface{}{
-		"id": id,
-	}, err)
+	response := dto.IdResponse{Id: id}
+	commonJSONResponse(c, response, err)
 }
 
 func handleUserFindError(c *gin.Context, err error) bool {

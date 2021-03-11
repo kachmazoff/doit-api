@@ -29,6 +29,17 @@ func (r *UsersMysqlRepo) Create(newUser model.User) (string, error) {
 	return generatedId, nil
 }
 
+func (r *UsersMysqlRepo) GetByEmail(email string) (model.User, error) {
+	query := fmt.Sprintf("SELECT * FROM %s WHERE email=? LIMIT 1", usersTable)
+
+	var user model.User
+	if err := r.db.Get(&user, query, email); err != nil {
+		return model.User{}, err
+	}
+
+	return user, nil
+}
+
 func (r *UsersMysqlRepo) GetByUsername(username string) (model.User, error) {
 	query := fmt.Sprintf("SELECT * FROM %s WHERE username=? LIMIT 1", usersTable)
 

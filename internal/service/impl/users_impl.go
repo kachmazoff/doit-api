@@ -61,6 +61,10 @@ func (u *UsersService) GetByUsername(username string) (model.User, error) {
 	return u.repo.GetByUsername(username)
 }
 
+func (u *UsersService) GetByEmail(email string) (model.User, error) {
+	return u.repo.GetByEmail(email)
+}
+
 func sendVerificationMessage(sender mailing.Sender, user model.User) {
 	const template = "Вы зарегистрировались в сервисе <b>Doit</b>, как <i>%s</i>.<br></br> Для подтверждения регистрации перейдите по ссылке <a href='http://localhost:8080/api/auth/activate?id=%s'>Подтвердить</a>"
 	mailBody := fmt.Sprintf(template, user.Username, user.Id)

@@ -1,29 +1,11 @@
 package controller
 
-import (
-	"net/http"
-
-	"github.com/gin-gonic/gin"
-	"github.com/kachmazoff/doit-api/internal/model"
-)
+import "github.com/gin-gonic/gin"
 
 func (h *Controller) initParticipantsRoutes(api *gin.RouterGroup) {
-	participants := api.Group("/participants")
+	participant := api.Group("/participants/:participantId")
 	{
-		participants.POST("/", h.userIdentity, h.createParticipant)
-		participant := participants.Group("/:participantId")
 		h.initNotesRoutes(participant)
 		h.initSuggestionsRoutes(participant)
 	}
-}
-
-func (h *Controller) createParticipant(c *gin.Context) {
-	var input model.Participant
-	if err := c.BindJSON(&input); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, err)
-		return
-	}
-
-	id, err := h.services.Participants.Create(input)
-	handleCreation(c, id, err)
 }

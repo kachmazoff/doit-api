@@ -1,5 +1,70 @@
 basePath: /api/
 definitions:
+  dto.IdResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  dto.Login:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.MessageResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  dto.Registration:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.TokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  model.Challenge:
+    properties:
+      author_id:
+        type: string
+      body:
+        type: string
+      created:
+        type: string
+      id:
+        type: string
+      participants_type:
+        type: string
+      show_author:
+        type: boolean
+      title:
+        type: string
+      visible_type:
+        type: string
+    type: object
+  model.Note:
+    properties:
+      author_id:
+        type: string
+      body:
+        type: string
+      created:
+        type: string
+      id:
+        type: string
+      participant_id:
+        type: string
+      type:
+        type: string
+    type: object
   model.Participant:
     properties:
       anonymous:
@@ -21,6 +86,66 @@ definitions:
       visible_type:
         type: string
     type: object
+  model.Suggestion:
+    properties:
+      anonymous:
+        type: boolean
+      author_id:
+        type: string
+      body:
+        type: string
+      created:
+        type: string
+      created_note_id:
+        type: string
+      id:
+        type: string
+      participant_id:
+        type: string
+    type: object
+  model.TimelineItem:
+    properties:
+      anonymous:
+        type: boolean
+      author_id:
+        type: string
+      body:
+        type: string
+      challenge_id:
+        type: string
+      created:
+        type: string
+      created_note_id:
+        type: string
+      email:
+        type: string
+      end_date:
+        type: string
+      id:
+        type: string
+      index:
+        type: integer
+      participant_id:
+        type: string
+      participants_type:
+        type: string
+      show_author:
+        type: boolean
+      status:
+        type: string
+      team_id:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+      user_id:
+        type: string
+      username:
+        type: string
+      visible_type:
+        type: string
+    type: object
   model.User:
     properties:
       email:
@@ -37,6 +162,436 @@ info:
   title: Doit API
   version: "1.0"
 paths:
+  /auth/activate:
+    post:
+      consumes:
+      - application/json
+      description: Активация нового аккаунта (подтверждение электронной почты)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      summary: Account activation
+      tags:
+      - auth
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Получение jwt-токена для дальнейшей работы с сервисом
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      summary: Login
+      tags:
+      - auth
+  /auth/registration:
+    post:
+      consumes:
+      - application/json
+      description: Создание нового пользователя
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Registration'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.IdResponse'
+      summary: Registration
+      tags:
+      - auth
+  /challenges:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка челленджей
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Challenge'
+            type: array
+      summary: Get all challenges
+      tags:
+      - challenges
+    post:
+      consumes:
+      - application/json
+      description: Создание нового челленджа
+      parameters:
+      - description: Модель челленджа
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.Challenge'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.IdResponse'
+      security:
+      - Auth: []
+      summary: Create challenge
+      tags:
+      - challenges
+  /challenges/{challengeId}/participants:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка участников в челлендже
+      parameters:
+      - description: Id челленджа
+        in: path
+        name: challengeId
+        required: true
+        type: string
+      - description: Статус участников
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Participant'
+            type: array
+      summary: Get challenge's participants
+      tags:
+      - participants
+    post:
+      consumes:
+      - application/json
+      description: Создание нового участника (регистрация в челлендже в качестве участника)
+      parameters:
+      - description: Id челленджа
+        in: path
+        name: challengeId
+        required: true
+        type: string
+      - description: Модель участника
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.Participant'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.IdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "403":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      security:
+      - Auth: []
+      summary: Create participant
+      tags:
+      - participants
+  /follow:
+    post:
+      consumes:
+      - application/json
+      description: Подписка на пользователя
+      parameters:
+      - description: Id пользователя
+        in: query
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      security:
+      - Auth: []
+      summary: Follow user
+      tags:
+      - followers
+  /participants/{participantId}/notes:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка записей дневника участника челленджа. В зависимости
+        от текущего пользователя, список может быть анонимизирован
+      parameters:
+      - description: Id участника
+        in: path
+        name: participantId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Note'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      security:
+      - Auth: []
+      summary: Get notes
+      tags:
+      - notes
+    post:
+      consumes:
+      - application/json
+      description: Создание новой записи в дневнике участника челленджа
+      parameters:
+      - description: Id участника
+        in: path
+        name: participantId
+        required: true
+        type: string
+      - description: Модель записи
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.Note'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.IdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "403":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      security:
+      - Auth: []
+      summary: Create note
+      tags:
+      - notes
+  /participants/{participantId}/suggestions:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка предложений для участника
+      parameters:
+      - description: Id участника
+        in: path
+        name: participantId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Suggestion'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      summary: Get suggestions
+      tags:
+      - suggestions
+    post:
+      consumes:
+      - application/json
+      description: Создание нового предложения для участника
+      parameters:
+      - description: Id участника
+        in: path
+        name: participantId
+        required: true
+        type: string
+      - description: Модель предложения
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.Suggestion'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.IdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "403":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      security:
+      - Auth: []
+      summary: Create suggestion
+      tags:
+      - suggestions
+  /timeline:
+    get:
+      consumes:
+      - application/json
+      description: Получение общего таймлайна
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.TimelineItem'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      summary: Get common timeline
+      tags:
+      - timeline
+  /timeline/own:
+    get:
+      consumes:
+      - application/json
+      description: Получение личного таймлайна. Состоит из личных событий текущего
+        пользователя (включая анонимные)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.TimelineItem'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "403":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      security:
+      - Auth: []
+      summary: Get own timeline
+      tags:
+      - timeline
+  /timeline/personalized:
+    get:
+      consumes:
+      - application/json
+      description: Получение персонализированного таймлайна. Состоит из событий тех
+        пользователей, на которых подписан текущий
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.TimelineItem'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "403":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      security:
+      - Auth: []
+      summary: Get personalized timeline
+      tags:
+      - timeline
+  /unfollow:
+    post:
+      consumes:
+      - application/json
+      description: Отписка от пользователя
+      parameters:
+      - description: Id пользователя
+        in: query
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.MessageResponse'
+      security:
+      - Auth: []
+      summary: Unfollow user
+      tags:
+      - followers
   /users/{username}:
     get:
       consumes:
@@ -80,7 +635,6 @@ paths:
             type: array
       summary: Get user's followees
       tags:
-      - users
       - followers
   /users/{username}/followers:
     get:
@@ -104,7 +658,6 @@ paths:
             type: array
       summary: Get user's followers
       tags:
-      - users
       - followers
   /users/{username}/participants:
     get:
@@ -134,7 +687,6 @@ paths:
       - Auth: []
       summary: Get user's participations
       tags:
-      - users
       - participants
 securityDefinitions:
   Auth:
