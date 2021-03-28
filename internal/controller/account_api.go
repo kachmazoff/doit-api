@@ -86,10 +86,7 @@ func (h *Controller) getToken(c *gin.Context) {
 		return
 	}
 
-	password := []byte(input.Password)
-	hashedPassword, err := bcrypt.GenerateFromPassword(password, 6)
-
-	if string(hashedPassword) != user.Password {
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, createMessage("Неверный пароль"))
 		return
 	}
