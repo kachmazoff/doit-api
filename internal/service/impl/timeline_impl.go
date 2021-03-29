@@ -63,6 +63,15 @@ func (s *TimelineService) GetForUser(userId string) ([]model.TimelineItem, error
 	if err != nil {
 		return []model.TimelineItem{}, err
 	}
+
+	// TODO: create function enrichTimeline
+	for i := 0; i < len(timeline); i++ {
+		err := s.EnrichItem(&timeline[i])
+		if err != nil {
+			return []model.TimelineItem{}, err
+		}
+	}
+
 	s.Anonymize(&timeline)
 	return timeline, nil
 }
