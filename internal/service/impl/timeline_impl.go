@@ -43,6 +43,7 @@ func (s *TimelineService) GetCommon() ([]model.TimelineItem, error) {
 		return []model.TimelineItem{}, err
 	}
 
+	// TODO: create function enrichTimeline
 	for i := 0; i < len(timeline); i++ {
 		err := s.EnrichItem(&timeline[i])
 		if err != nil {
@@ -52,6 +53,32 @@ func (s *TimelineService) GetCommon() ([]model.TimelineItem, error) {
 
 	for i := 0; i < len(timeline); i++ {
 		s.AnonymizeItem(&timeline[i])
+	}
+
+	return timeline, nil
+}
+
+func (s *TimelineService) GetForUser(userId string) ([]model.TimelineItem, error) {
+	timeline, err := s.repo.GetForUser(userId)
+	if err != nil {
+		return []model.TimelineItem{}, err
+	}
+	s.Anonymize(&timeline)
+	return timeline, nil
+}
+
+func (s *TimelineService) GetUserOwn(userId string) ([]model.TimelineItem, error) {
+	timeline, err := s.repo.GetUserOwn(userId)
+	if err != nil {
+		return []model.TimelineItem{}, err
+	}
+
+	// TODO: create function enrichTimeline
+	for i := 0; i < len(timeline); i++ {
+		err := s.EnrichItem(&timeline[i])
+		if err != nil {
+			return []model.TimelineItem{}, err
+		}
 	}
 
 	return timeline, nil
@@ -74,7 +101,7 @@ func (s *TimelineService) EnrichItem(timelineItem *model.TimelineItem) error {
 		note, err := s.srvNotes.GetById(*timelineItem.NoteId)
 
 		if err != nil {
-			return nil
+			return err
 		}
 
 		timelineItem.Note = &note
@@ -84,7 +111,7 @@ func (s *TimelineService) EnrichItem(timelineItem *model.TimelineItem) error {
 		suggestion, err := s.srvSuggestions.GetById(*timelineItem.SuggestionId)
 
 		if err != nil {
-			return nil
+			return err
 		}
 
 		timelineItem.Suggestion = &suggestion
@@ -116,19 +143,6 @@ func (s *TimelineService) AnonymizeItem(timelineItem *model.TimelineItem) bool {
 	}
 
 	return isAnonym
-}
-
-func (s *TimelineService) GetForUser(userId string) ([]model.TimelineItem, error) {
-	timeline, err := s.repo.GetForUser(userId)
-	if err != nil {
-		return []model.TimelineItem{}, err
-	}
-	s.Anonymize(&timeline)
-	return timeline, nil
-}
-
-func (s *TimelineService) GetUserOwn(userId string) ([]model.TimelineItem, error) {
-	return s.repo.GetUserOwn(userId)
 }
 
 func print(timelineItem model.TimelineItem) {
