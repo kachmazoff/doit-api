@@ -121,7 +121,7 @@ func (s *TimelineService) EnrichItem(timelineItem *model.TimelineItem) error {
 func (s *TimelineService) Anonymize(timeline *[]model.TimelineItem) bool {
 	isAnonym := false
 	for i := 0; i < len(*timeline); i++ {
-		isAnonym = isAnonym || s.AnonymizeItem(&(*timeline)[i])
+		isAnonym = s.AnonymizeItem(&(*timeline)[i]) || isAnonym
 	}
 	return isAnonym
 }
