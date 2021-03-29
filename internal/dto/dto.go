@@ -1,5 +1,7 @@
 package dto
 
+import "github.com/kachmazoff/doit-api/internal/model"
+
 type MessageResponse struct {
 	Message string `json:"message"`
 }
@@ -9,7 +11,8 @@ type IdResponse struct {
 }
 
 type TokenResponse struct {
-	Token string `json:"token"`
+	Token string     `json:"token"`
+	User  model.User `json:"user"`
 }
 
 type Registration struct {

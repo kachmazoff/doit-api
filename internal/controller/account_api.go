@@ -93,5 +93,5 @@ func (h *Controller) getToken(c *gin.Context) {
 
 	token, err := h.tokenManager.NewJWT(user.Id, time.Hour)
 
-	commonJSONResponse(c, dto.TokenResponse{Token: token}, err)
+	commonJSONResponse(c, dto.TokenResponse{Token: token, User: user}, err)
 }
