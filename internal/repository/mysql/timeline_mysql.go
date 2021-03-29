@@ -64,20 +64,30 @@ func (r *TimelineMysqlRepo) GetForUser(userId string) ([]model.TimelineItem, err
 	%s
 	WHERE
 		u.id IN (%s) AND
-		(t.challenge_id IS NOT NULL AND c.visible_type='public') AND (
-			(t.participant_id IS NULL AND t.note_id IS NULL AND t.suggestion_id IS NULL) 
-			OR
-			(t.participant_id IS NOT NULL AND p.visible_type = 'public' AND (
-				(t.suggestion_id IS NULL AND (t.note_id IS NOT NULL OR c.show_author = false OR p.user_id != c.author_id))
-				OR
-				(t.suggestion_id IS NOT NULL AND t.note_id IS NULL)
-			))
-		)
+		t.type='CREATE_CHALLENGE'	AND c.visible_type='public' AND c.show_author=true
+		OR
+		t.type='ACCEPT_CHALLENGE'	AND c.visible_type='public' AND p.visible_type='public' AND p.anonymous=false AND (c.show_author = false OR p.user_id != c.author_id)
+		OR
+		t.type='ADD_NOTE'			AND c.visible_type='public' AND p.visible_type='public' AND p.anonymous=false
+		OR
+		t.type='ADD_SUGGESTION'		AND c.visible_type='public' AND p.visible_type='public' AND s.anonymous=false
 	ORDER BY t.created DESC
 	`, selectBaseTimelineQuery(), selectFolloweesQuery(userId))
 
 	return r.selectTimeline(query)
 }
+
+/*
+(t.challenge_id IS NOT NULL AND c.visible_type='public') AND (
+	(t.participant_id IS NULL AND t.note_id IS NULL AND t.suggestion_id IS NULL)
+	OR
+	(t.participant_id IS NOT NULL AND p.visible_type = 'public' AND (
+		(t.suggestion_id IS NULL AND (t.note_id IS NOT NULL OR c.show_author = false OR p.user_id != c.author_id))
+		OR
+		(t.suggestion_id IS NOT NULL AND t.note_id IS NULL)
+	))
+)
+*/
 
 func (r *TimelineMysqlRepo) GetUserOwn(userId string) ([]model.TimelineItem, error) {
 	query := fmt.Sprintf(`
