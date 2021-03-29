@@ -97,6 +97,10 @@ func (r *TimelineMysqlRepo) selectTimeline(query string, args ...interface{}) ([
 		return []model.TimelineItem{}, err
 	}
 
+	if timeline == nil {
+		timeline = []model.TimelineItem{}
+	}
+
 	return timeline, nil
 }
 
