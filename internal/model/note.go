@@ -8,6 +8,6 @@ type Note struct {
 	Type          string    `json:"type" db:"type"`
 	Body          string    `json:"body" db:"body"`
 	ParticipantId string    `json:"participant_id" db:"participant_id"`
-	AuthorId      string    `json:"author_id" db:"author_id"`
+	AuthorId      string    `json:"author_id,omitempty" db:"author_id"`
 	Anonymous     *bool     `json:"-" db:"anonymous"`
 }
