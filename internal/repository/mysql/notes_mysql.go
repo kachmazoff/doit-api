@@ -42,11 +42,18 @@ func (r *NotesMysqlRepo) Create(note model.Note) (string, error) {
 }
 
 func (r *NotesMysqlRepo) GetNotesOfParticipant(participantId string) ([]model.Note, error) {
-	query := fmt.Sprintf("SELECT * FROM %s WHERE participant_id=?", participantsTable)
+	query := fmt.Sprintf("SELECT * FROM %s WHERE participant_id=?", notesTable)
 
 	var notes []model.Note
-	if err := r.db.Get(&notes, query, participantId); err != nil {
+	if err := r.db.Select(&notes, query, participantId); err != nil {
 		return []model.Note{}, err
+	}
+
+	anonymous := true
+	if err := r.db.Get(&anonymous, fmt.Sprintf("SELECT anonymous FROM %s WHERE id=?", participantsTable), participantId); err == nil {
+		for i := 0; i < len(notes); i++ {
+			notes[i].Anonymous = &anonymous
+		}
 	}
 
 	return notes, nil
