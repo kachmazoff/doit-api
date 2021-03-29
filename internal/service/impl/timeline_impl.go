@@ -39,58 +39,47 @@ func (s *TimelineService) GetAll() ([]model.TimelineItem, error) {
 
 func (s *TimelineService) GetCommon() ([]model.TimelineItem, error) {
 	timeline, err := s.repo.GetCommon()
-	if err != nil {
-		return []model.TimelineItem{}, err
-	}
-
-	// TODO: create function enrichTimeline
-	for i := 0; i < len(timeline); i++ {
-		err := s.EnrichItem(&timeline[i])
-		if err != nil {
-			return []model.TimelineItem{}, err
-		}
-	}
-
-	for i := 0; i < len(timeline); i++ {
-		s.AnonymizeItem(&timeline[i])
-	}
-
-	return timeline, nil
+	return s.commonGetterHandler(timeline, err, true, true)
 }
 
 func (s *TimelineService) GetForUser(userId string) ([]model.TimelineItem, error) {
 	timeline, err := s.repo.GetForUser(userId)
-	if err != nil {
-		return []model.TimelineItem{}, err
-	}
-
-	// TODO: create function enrichTimeline
-	for i := 0; i < len(timeline); i++ {
-		err := s.EnrichItem(&timeline[i])
-		if err != nil {
-			return []model.TimelineItem{}, err
-		}
-	}
-
-	s.Anonymize(&timeline)
-	return timeline, nil
+	return s.commonGetterHandler(timeline, err, true, true)
 }
 
 func (s *TimelineService) GetUserOwn(userId string) ([]model.TimelineItem, error) {
 	timeline, err := s.repo.GetUserOwn(userId)
+	return s.commonGetterHandler(timeline, err, true, false)
+}
+
+func (s *TimelineService) commonGetterHandler(timeline []model.TimelineItem, err error, needEnrich, needAnonymize bool) ([]model.TimelineItem, error) {
 	if err != nil {
 		return []model.TimelineItem{}, err
 	}
 
-	// TODO: create function enrichTimeline
-	for i := 0; i < len(timeline); i++ {
-		err := s.EnrichItem(&timeline[i])
-		if err != nil {
-			return []model.TimelineItem{}, err
-		}
+	if needEnrich {
+		// TODO: handle error
+		s.EnrichTimeline(&timeline)
+	}
+
+	if needAnonymize {
+		s.Anonymize(&timeline)
 	}
 
 	return timeline, nil
+}
+
+func (s *TimelineService) EnrichTimeline(timeline *[]model.TimelineItem) error {
+	var err error
+
+	for i := 0; i < len(*timeline); i++ {
+		currErr := s.EnrichItem(&(*timeline)[i])
+		if currErr != nil {
+			err = currErr
+		}
+	}
+
+	return err
 }
 
 func (s *TimelineService) EnrichItem(timelineItem *model.TimelineItem) error {
