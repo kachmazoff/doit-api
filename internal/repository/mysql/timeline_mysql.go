@@ -63,14 +63,15 @@ func (r *TimelineMysqlRepo) GetForUser(userId string) ([]model.TimelineItem, err
 	query := fmt.Sprintf(`
 	%s
 	WHERE
-		u.id IN (%s) AND
-		t.type='CREATE_CHALLENGE'	AND c.visible_type='public' AND c.show_author=true
-		OR
-		t.type='ACCEPT_CHALLENGE'	AND c.visible_type='public' AND p.visible_type='public' AND p.anonymous=false AND (c.show_author = false OR p.user_id != c.author_id)
-		OR
-		t.type='ADD_NOTE'			AND c.visible_type='public' AND p.visible_type='public' AND p.anonymous=false
-		OR
-		t.type='ADD_SUGGESTION'		AND c.visible_type='public' AND p.visible_type='public' AND s.anonymous=false
+		u.id IN (%s) AND (
+			t.type='CREATE_CHALLENGE'	AND c.visible_type='public' AND c.show_author=true
+			OR
+			t.type='ACCEPT_CHALLENGE'	AND c.visible_type='public' AND p.visible_type='public' AND p.anonymous=false AND (c.show_author = false OR p.user_id != c.author_id)
+			OR
+			t.type='ADD_NOTE'			AND c.visible_type='public' AND p.visible_type='public' AND p.anonymous=false
+			OR
+			t.type='ADD_SUGGESTION'		AND c.visible_type='public' AND p.visible_type='public' AND s.anonymous=false
+		)
 	ORDER BY t.created DESC
 	`, selectBaseTimelineQuery(), selectFolloweesQuery(userId))
 
