@@ -12,4 +12,6 @@ type Participant struct {
 	Status      string     `json:"status" db:"status"`
 	Anonymous   bool       `json:"anonymous" db:"anonymous"`
 	VisibleType string     `json:"visible_type" db:"visible_type"`
+
+	*Challenge `json:"challenge,omitempty" db:"challenge"`
 }

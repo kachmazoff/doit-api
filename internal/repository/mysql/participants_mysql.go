@@ -40,16 +40,31 @@ func (r *ParticipantsMysqlRepo) Create(participant model.Participant) (string, e
 	return generatedId, nil
 }
 
-// TODO: Выдавать только то, к чему есть доступ? (join по challenge_id, challenge.visible_type='public')
+// TODO: Выдавать только то, к чему есть доступ? (challenge.visible_type='public')
 func (r *ParticipantsMysqlRepo) GetParticipationsOfUser(userId string, onlyPublic bool, onlyActive bool) ([]model.Participant, error) {
-	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id=?", participantsTable)
+	query := fmt.Sprintf(`
+	SELECT 
+		p.*,
+
+		c.id AS "challenge.id",
+		c.created AS "challenge.created",
+		c.author_id AS "challenge.author_id",
+		c.show_author AS "challenge.show_author",
+		c.title AS "challenge.title",
+		c.body AS "challenge.body",
+		c.visible_type AS "challenge.visible_type",
+		c.participants_type AS "challenge.participants_type"
+	FROM %s AS p
+		LEFT JOIN %s AS c ON p.challenge_id=c.id 
+	WHERE p.user_id=?`, participantsTable, challengesTable)
+
 	if onlyActive {
-		query += " AND status='in_progress'"
+		query += " AND p.status='in_progress'"
 	}
 	if onlyPublic {
-		query += " AND anonymous=false AND visible_type='public'"
+		query += " AND p.anonymous=false AND p.visible_type='public'"
 	}
-	query += " ORDER BY created DESC"
+	query += " ORDER BY p.created DESC"
 
 	return r.selectParticipants(query, userId)
 }

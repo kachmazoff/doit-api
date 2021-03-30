@@ -50,8 +50,9 @@ func (s *ParticipantsService) GetParticipantsInChallenge(challengeId string, onl
 }
 
 func (s *ParticipantsService) HasRootAccess(participantId, userId string) bool {
-	participant, err := s.GetById(participantId)
+	participant, err := s.repo.GetById(participantId)
 	if err != nil {
+		// TODO: handle error
 		return false
 	}
 	// TODO: check userId in team

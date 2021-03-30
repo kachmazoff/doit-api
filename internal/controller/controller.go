@@ -24,7 +24,7 @@ func NewController(services *service.Services, tokenManager auth.TokenManager) *
 }
 
 func (h *Controller) InitRoutes() *gin.Engine {
-	router := gin.New()
+	router := gin.Default()
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
@@ -35,6 +35,8 @@ func (h *Controller) InitRoutes() *gin.Engine {
 		h.initChallengesRoutes(api)
 		h.initTimelineRoutes(api)
 		h.initFollowersRoutes(api)
+		h.initParticipantsRoutes(api)
+		// h.initDebugRoutes(api)
 	}
 
 	return router

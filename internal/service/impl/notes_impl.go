@@ -48,7 +48,7 @@ func (s *NotesService) GetNotesOfParticipant(participantId string, needAnonymize
 func (s *NotesService) Anonymize(note *model.Note) bool {
 	isAnonym := false
 
-	if *note.Anonymous {
+	if note.Anonymous != nil && *note.Anonymous {
 		isAnonym = true
 		note.AuthorId = ""
 	}
