@@ -16,6 +16,7 @@ func (h *Controller) initAccountRoutes(api *gin.RouterGroup) {
 		auth.POST("/registration", h.registerUser)
 		auth.POST("/login", h.getToken)
 		auth.POST("/activate", h.activateAccount)
+		auth.GET("/check", h.validateToken)
 	}
 }
 
@@ -94,4 +95,19 @@ func (h *Controller) getToken(c *gin.Context) {
 	token, err := h.tokenManager.NewJWT(user.Id, time.Hour)
 
 	commonJSONResponse(c, dto.TokenResponse{Token: token, User: user}, err)
+}
+
+func (h *Controller) validateToken(c *gin.Context) {
+	_, err := h.parseAuthHeader(c)
+	response := struct {
+		IsValid bool `json:"isValid"`
+	}{
+		IsValid: err == nil,
+	}
+
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+	} else {
+		c.JSON(http.StatusOK, response)
+	}
 }
