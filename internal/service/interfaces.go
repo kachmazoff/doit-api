@@ -27,12 +27,13 @@ type Timeline interface {
 
 type Participants interface {
 	Create(participant model.Participant) (string, error)
+	GetByIdUNSAFE(id string) (model.Participant, error)
 	GetById(id string) (model.Participant, error)
 	GetParticipationsOfUser(userId string, onlyPublic, onlyActive bool) ([]model.Participant, error)
 	GetParticipantsInChallenge(challengeId string, onlyPublic, onlyActive bool) ([]model.Participant, error)
 	HasRootAccess(participantId, userId string) bool
 	IsPublic(participantId string) bool
-	Anonymize(*model.Participant) bool
+	Anonymize(participant *model.Participant, userId string) bool
 }
 
 type Notes interface {

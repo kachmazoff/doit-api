@@ -17,7 +17,23 @@ func NewParticipantsMysqlRepo(db *sqlx.DB) *ParticipantsMysqlRepo {
 }
 
 func (r *ParticipantsMysqlRepo) GetById(id string) (model.Participant, error) {
-	query := fmt.Sprintf("SELECT * FROM %s WHERE id=? LIMIT 1", participantsTable)
+	query := fmt.Sprintf(`
+	SELECT 
+		p.*,
+
+		c.id AS "challenge.id",
+		c.created AS "challenge.created",
+		c.author_id AS "challenge.author_id",
+		c.show_author AS "challenge.show_author",
+		c.title AS "challenge.title",
+		c.body AS "challenge.body",
+		c.visible_type AS "challenge.visible_type",
+		c.participants_type AS "challenge.participants_type"
+	FROM %s AS p
+		LEFT JOIN %s AS c ON p.challenge_id=c.id 
+	WHERE p.id=? LIMIT 1`, participantsTable, challengesTable)
+
+	// query := fmt.Sprintf("SELECT * FROM %s WHERE id=? LIMIT 1", participantsTable)
 
 	var participant model.Participant
 	if err := r.db.Get(&participant, query, id); err != nil {
