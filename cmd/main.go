@@ -21,7 +21,7 @@ import (
 // @version 1.0
 // @description API Server for Doit App
 
-// @host localhost:8080
+// @host localhost:3000
 // @BasePath /api/
 
 // @securityDefinitions.apikey Auth

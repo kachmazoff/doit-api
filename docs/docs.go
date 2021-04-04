@@ -330,6 +330,38 @@ var doc = `{
                 }
             }
         },
+        "/participants/{participantId}": {
+            "get": {
+                "description": "Get participant info by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "participants"
+                ],
+                "summary": "Get participant info",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id дневника",
+                        "name": "participantId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Participant"
+                        }
+                    }
+                }
+            }
+        },
         "/participants/{participantId}/notes": {
             "get": {
                 "security": [
@@ -531,7 +563,7 @@ var doc = `{
         },
         "/timeline": {
             "get": {
-                "description": "Получение общего таймлайна",
+                "description": "Получение таймлайна по фильтрам",
                 "consumes": [
                     "application/json"
                 ],
@@ -541,7 +573,60 @@ var doc = `{
                 "tags": [
                     "timeline"
                 ],
-                "summary": "Get common timeline",
+                "summary": "Get timeline with filters",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id пользователя",
+                        "name": "userId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Тип запрашиваемого таймлайна (subs, common)",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Id дневника/участника",
+                        "name": "participantId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Id челленджа",
+                        "name": "challengeId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Массив типов событий ('CREATE_CHALLENGE', 'ACCEPT_CHALLENGE', 'ADD_NOTE', 'ADD_SUGGESTION')",
+                        "name": "eventTypes",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Порядок сортировки (ASC, DESC)",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Индекс последней полученной записи",
+                        "name": "lastIndex",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Максимальное количество записей",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -886,6 +971,9 @@ var doc = `{
             "properties": {
                 "token": {
                     "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/model.User"
                 }
             }
         },
@@ -947,6 +1035,12 @@ var doc = `{
                 "anonymous": {
                     "type": "boolean"
                 },
+                "author_id": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
                 "challenge_id": {
                     "type": "string"
                 },
@@ -959,10 +1053,19 @@ var doc = `{
                 "id": {
                     "type": "string"
                 },
+                "participants_type": {
+                    "type": "string"
+                },
+                "show_author": {
+                    "type": "boolean"
+                },
                 "status": {
                     "type": "string"
                 },
                 "team_id": {
+                    "type": "string"
+                },
+                "title": {
                     "type": "string"
                 },
                 "user_id": {
@@ -1100,7 +1203,7 @@ type swaggerInfo struct {
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.0",
-	Host:        "localhost:8080",
+	Host:        "localhost:3000",
 	BasePath:    "/api/",
 	Schemes:     []string{},
 	Title:       "Doit API",
