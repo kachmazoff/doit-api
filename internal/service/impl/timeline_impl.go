@@ -37,6 +37,12 @@ func (s *TimelineService) GetAll() ([]model.TimelineItem, error) {
 	return s.repo.GetAll()
 }
 
+func (s *TimelineService) GetWithFilters(filters model.TimelineFilters) ([]model.TimelineItem, error) {
+	timeline, err := s.repo.GetWithFilters(filters)
+	// Todo: use requestAuthor in anonymize functions
+	return s.commonGetterHandler(timeline, err, true, true)
+}
+
 func (s *TimelineService) GetCommon() ([]model.TimelineItem, error) {
 	timeline, err := s.repo.GetCommon()
 	return s.commonGetterHandler(timeline, err, true, true)
@@ -93,6 +99,7 @@ func (s *TimelineService) EnrichItem(timelineItem *model.TimelineItem) error {
 		}
 
 		timelineItem.Participant = &participant
+		timelineItem.Participant.Challenge = nil
 	}
 
 	if timelineItem.NoteId != nil {
@@ -127,13 +134,19 @@ func (s *TimelineService) Anonymize(timeline *[]model.TimelineItem) bool {
 }
 
 func (s *TimelineService) AnonymizeItem(timelineItem *model.TimelineItem) bool {
-	isAnonym := false
+	s.srvChallenges.Anonymize(&timelineItem.Challenge)
+	if timelineItem.Participant != nil {
+		s.srvParticipants.Anonymize(timelineItem.Participant, "")
+	}
 
-	// TODO: refactoring
-	isAnonym = isAnonym || s.srvChallenges.Anonymize(&timelineItem.Challenge)
-	isAnonym = isAnonym || timelineItem.ParticipantId != nil && timelineItem.Participant != nil && timelineItem.Participant.Anonymous
-	isAnonym = isAnonym || timelineItem.NoteId != nil && timelineItem.Note != nil && *timelineItem.Note.Anonymous
-	isAnonym = isAnonym || timelineItem.SuggestionId != nil && timelineItem.Suggestion != nil && timelineItem.Suggestion.Anonymous
+	// TODO: Anonymize for suggestion
+	if timelineItem.Suggestion != nil {
+		// timelineItem.Suggestion.Anonymous
+	}
+
+	isAnonym := (timelineItem.Type == "CREATE_CHALLENGE" && !timelineItem.Challenge.ShowAuthor) ||
+		((timelineItem.Type == "ACCEPT_CHALLENGE" || timelineItem.Type == "ADD_NOTE") && timelineItem.Participant.Anonymous) ||
+		(timelineItem.Type == "ADD_SUGGESTION" && !timelineItem.Suggestion.Anonymous)
 
 	if isAnonym {
 		timelineItem.UserId = ""

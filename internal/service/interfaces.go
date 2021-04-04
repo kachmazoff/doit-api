@@ -17,6 +17,7 @@ type Challenges interface {
 }
 
 type Timeline interface {
+	GetWithFilters(filters model.TimelineFilters) ([]model.TimelineItem, error)
 	GetAll() ([]model.TimelineItem, error)
 	GetCommon() ([]model.TimelineItem, error)
 	GetForUser(userId string) ([]model.TimelineItem, error)
