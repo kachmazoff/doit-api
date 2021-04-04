@@ -20,3 +20,15 @@ type TimelineItem struct {
 	*Note        `json:"note,omitempty"`
 	*Suggestion  `json:"suggestion,omitempty"`
 }
+
+type TimelineFilters struct {
+	RequestAuthor string
+	UserId        string
+	TimelineType  string // common, own, subs
+	EventTypes    []string
+	ParticipantId string
+	ChallengeId   string
+	Limit         int
+	LastIndex     int
+	OrderType     string
+}
