@@ -19,6 +19,7 @@ type Challenges interface {
 
 type Timeline interface {
 	CreateChallenge() error
+	GetWithFilters(filters model.TimelineFilters) ([]model.TimelineItem, error)
 	// TODO: Remove later. Temp method
 	GetAll() ([]model.TimelineItem, error)
 	GetCommon() ([]model.TimelineItem, error)
