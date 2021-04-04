@@ -69,15 +69,18 @@ func (h *Controller) getTimeline(c *gin.Context) {
 		timelineType = "common"
 	} else if timelineType == "subs" {
 		if currentUser == "" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, err)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, createMessage("Необходимо авторизоваться"))
 			return
 		}
 		if userId != "" && userId != currentUser {
-			c.AbortWithStatusJSON(http.StatusForbidden, err)
+			c.AbortWithStatusJSON(http.StatusForbidden, createMessage("Нет доступа"))
 			return
 		} else {
 			userId = currentUser
 		}
+	} else if timelineType != "common" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, createMessage("Неизвестный тип таймлайна"))
+		return
 	}
 
 	filters := model.TimelineFilters{
