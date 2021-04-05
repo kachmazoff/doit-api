@@ -181,7 +181,18 @@ func (r *TimelineMysqlRepo) GetWithFilters(filters model.TimelineFilters) ([]mod
 		conditions = append(conditions, fmt.Sprintf(`t.challenge_id ='%s'`, filters.ChallengeId))
 	}
 
-	if filters.TimelineType == "subs" || filters.TimelineType == "common" && filters.UserId != "" && (filters.RequestAuthor == "" || filters.RequestAuthor != filters.UserId) {
+	// TODO: test
+	if filters.TimelineType == "common" && filters.RequestAuthor != "" {
+		conditions = append(conditions, fmt.Sprintf(`(
+			u.id='%s'
+			OR
+			t.type='CREATE_CHALLENGE'	AND c.visible_type='public' AND c.show_author=true
+			OR
+			(t.type='ACCEPT_CHALLENGE' 	OR t.type='ADD_NOTE') AND c.visible_type='public' AND p.visible_type='public' AND p.anonymous=false
+			OR
+			t.type='ADD_SUGGESTION'		AND c.visible_type='public' AND p.visible_type='public' AND s.anonymous=false
+		)`, filters.RequestAuthor))
+	} else if filters.TimelineType == "subs" || filters.TimelineType == "common" && filters.UserId != "" && (filters.RequestAuthor == "" || filters.RequestAuthor != filters.UserId) {
 		conditions = append(conditions, `(
 			t.type='CREATE_CHALLENGE'	AND c.visible_type='public' AND c.show_author=true
 			OR

@@ -190,6 +190,95 @@ var doc = `{
                 }
             }
         },
+        "/challenges/own": {
+            "get": {
+                "security": [
+                    {
+                        "Auth": []
+                    }
+                ],
+                "description": "Получение списка личных челленджей",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "challenges"
+                ],
+                "summary": "Get all own challenges",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Challenge"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/challenges/public": {
+            "get": {
+                "description": "Получение списка публичных челленджей",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "challenges"
+                ],
+                "summary": "Get all public challenges",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Challenge"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/challenges/{challengeId}": {
+            "get": {
+                "description": "Get challenge's info by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "challenges"
+                ],
+                "summary": "Get challenge's info",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id челленджа",
+                        "name": "challengeId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Challenge"
+                        }
+                    }
+                }
+            }
+        },
         "/challenges/{challengeId}/participants": {
             "get": {
                 "description": "Получение списка участников в челлендже",
@@ -775,6 +864,32 @@ var doc = `{
                 }
             }
         },
+        "/users": {
+            "get": {
+                "description": "Get all users",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "participants"
+                ],
+                "summary": "Get all users",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.User"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/users/{username}": {
             "get": {
                 "description": "Get user info by username",
@@ -992,6 +1107,9 @@ var doc = `{
                 "id": {
                     "type": "string"
                 },
+                "participant": {
+                    "$ref": "#/definitions/model.Participant"
+                },
                 "participants_type": {
                     "type": "string"
                 },
@@ -1035,12 +1153,6 @@ var doc = `{
                 "anonymous": {
                     "type": "boolean"
                 },
-                "author_id": {
-                    "type": "string"
-                },
-                "body": {
-                    "type": "string"
-                },
                 "challenge_id": {
                     "type": "string"
                 },
@@ -1053,19 +1165,10 @@ var doc = `{
                 "id": {
                     "type": "string"
                 },
-                "participants_type": {
-                    "type": "string"
-                },
-                "show_author": {
-                    "type": "boolean"
-                },
                 "status": {
                     "type": "string"
                 },
                 "team_id": {
-                    "type": "string"
-                },
-                "title": {
                     "type": "string"
                 },
                 "user_id": {
@@ -1135,6 +1238,9 @@ var doc = `{
                 "index": {
                     "type": "integer"
                 },
+                "participant": {
+                    "$ref": "#/definitions/model.Participant"
+                },
                 "participant_id": {
                     "type": "string"
                 },
@@ -1146,6 +1252,9 @@ var doc = `{
                 },
                 "status": {
                     "type": "string"
+                },
+                "subscribed": {
+                    "type": "boolean"
                 },
                 "team_id": {
                     "type": "string"
@@ -1175,6 +1284,9 @@ var doc = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "subscribed": {
+                    "type": "boolean"
                 },
                 "username": {
                     "type": "string"

@@ -110,3 +110,14 @@ func (r *ParticipantsMysqlRepo) selectParticipants(query string, args ...interfa
 
 	return participants, nil
 }
+
+func (r *ParticipantsMysqlRepo) GetByUserInChallenge(userId, challengeId string) (model.Participant, error) {
+	query := fmt.Sprintf("SELECT * FROM %s WHERE challenge_id=? AND user_id=? LIMIT 1", participantsTable)
+
+	var participant model.Participant
+	if err := r.db.Get(&participant, query, challengeId, userId); err != nil {
+		return model.Participant{}, err
+	}
+
+	return participant, nil
+}

@@ -9,4 +9,6 @@ type User struct {
 	Created  time.Time `json:"-" db:"created"`
 	Password string    `json:"-" db:"password"`
 	Status   string    `json:"-" db:"account_status"`
+
+	Subscribed *bool `json:"subscribed,omitempty" db:"-"`
 }

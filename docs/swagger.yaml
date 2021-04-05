@@ -43,6 +43,8 @@ definitions:
         type: string
       id:
         type: string
+      participant:
+        $ref: '#/definitions/model.Participant'
       participants_type:
         type: string
       show_author:
@@ -71,10 +73,6 @@ definitions:
     properties:
       anonymous:
         type: boolean
-      author_id:
-        type: string
-      body:
-        type: string
       challenge_id:
         type: string
       created:
@@ -83,15 +81,9 @@ definitions:
         type: string
       id:
         type: string
-      participants_type:
-        type: string
-      show_author:
-        type: boolean
       status:
         type: string
       team_id:
-        type: string
-      title:
         type: string
       user_id:
         type: string
@@ -137,6 +129,8 @@ definitions:
         type: string
       index:
         type: integer
+      participant:
+        $ref: '#/definitions/model.Participant'
       participant_id:
         type: string
       participants_type:
@@ -145,6 +139,8 @@ definitions:
         type: boolean
       status:
         type: string
+      subscribed:
+        type: boolean
       team_id:
         type: string
       title:
@@ -164,6 +160,8 @@ definitions:
         type: string
       id:
         type: string
+      subscribed:
+        type: boolean
       username:
         type: string
     type: object
@@ -281,6 +279,27 @@ paths:
       summary: Create challenge
       tags:
       - challenges
+  /challenges/{challengeId}:
+    get:
+      consumes:
+      - application/json
+      description: Get challenge's info by id
+      parameters:
+      - description: id челленджа
+        in: path
+        name: challengeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Challenge'
+      summary: Get challenge's info
+      tags:
+      - challenges
   /challenges/{challengeId}/participants:
     get:
       consumes:
@@ -344,6 +363,42 @@ paths:
       summary: Create participant
       tags:
       - participants
+  /challenges/own:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка личных челленджей
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Challenge'
+            type: array
+      security:
+      - Auth: []
+      summary: Get all own challenges
+      tags:
+      - challenges
+  /challenges/public:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка публичных челленджей
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Challenge'
+            type: array
+      summary: Get all public challenges
+      tags:
+      - challenges
   /follow:
     post:
       consumes:
@@ -661,6 +716,23 @@ paths:
       summary: Unfollow user
       tags:
       - followers
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Get all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+      summary: Get all users
+      tags:
+      - participants
   /users/{username}:
     get:
       consumes:

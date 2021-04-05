@@ -86,3 +86,15 @@ func (r *UsersMysqlRepo) GetEmailById(id string) (string, error) {
 
 	return email, nil
 }
+
+func (r *UsersMysqlRepo) GetAll() ([]model.User, error) {
+	query := fmt.Sprintf("SELECT * FROM %s", usersTable)
+
+	var users []model.User
+	if err := r.db.Select(&users, query); err != nil {
+		println(err.Error())
+		return []model.User{}, err
+	}
+
+	return users, nil
+}

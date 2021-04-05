@@ -38,3 +38,7 @@ func (s *FollowersService) GetFollowers(userId string) ([]model.User, error) {
 func (s *FollowersService) GetFollowees(userId string) ([]model.User, error) {
 	return s.repo.GetFollowees(userId)
 }
+
+func (s *FollowersService) ExistsFromTo(fromId, toId string) (bool, error) {
+	return s.repo.ExistsFromTo(fromId, toId)
+}

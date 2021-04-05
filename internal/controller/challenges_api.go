@@ -8,12 +8,19 @@ import (
 )
 
 func (h *Controller) initChallengesRoutes(api *gin.RouterGroup) {
-	courses := api.Group("/challenges")
+	challenges := api.Group("/challenges")
 	{
-		courses.GET("/", h.getAllChallenges)
-		courses.POST("/", h.userIdentity, h.createChallenge)
-		courses.GET("/:challengeId/participants", h.getParticipantsByChallenge)
-		courses.POST("/:challengeId/participants", h.userIdentity, h.createParticipant)
+		challenges.GET("/", h.optionalUserIdentity, h.getAllChallenges)
+		// challenges.GET("/public", h.getAllPublicChallenges)
+		// challenges.GET("/own", h.userIdentity, h.getAllOwnChallenges)
+		challenges.POST("/", h.userIdentity, h.createChallenge)
+
+		challenge := challenges.Group("/:challengeId")
+		{
+			challenge.GET("/", h.optionalUserIdentity, h.getChallengeById)
+			challenge.GET("/participants", h.getParticipantsByChallenge)
+			challenge.POST("/participants", h.userIdentity, h.createParticipant)
+		}
 	}
 }
 
@@ -48,7 +55,76 @@ func (h *Controller) createChallenge(c *gin.Context) {
 // @Success 200 {array} model.Challenge
 // @Router /challenges [get]
 func (h *Controller) getAllChallenges(c *gin.Context) {
-	challenges, err := h.services.Challenges.GetAll()
+	currentUser, _ := getUserId(c)
+	challengesType := c.Query("type")
+	var challenges []model.Challenge
+	var err error
+
+	if challengesType == "" {
+		challenges, err = h.services.Challenges.GetAll()
+	} else if challengesType == "public" {
+		challenges, err = h.services.Challenges.GetAllPublic()
+	} else if challengesType == "own" {
+		if currentUser == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, createMessage("Необходимо авторизоваться"))
+			return
+		}
+		challenges, err = h.services.Challenges.GetAllOwn(currentUser)
+	}
+	if challenges != nil && len(challenges) > 0 && currentUser != "" {
+		h.services.Challenges.EnrichAllWithUserParticipant(&challenges, currentUser)
+	}
+	commonJSONResponse(c, challenges, err)
+}
+
+// @Summary Get challenge's info
+// @Tags challenges
+// @Description Get challenge's info by id
+// @Accept  json
+// @Produce  json
+// @Param challengeId path string true "id челленджа"
+// @Success 200 {object} model.Challenge
+// @Router /challenges/{challengeId} [get]
+func (h *Controller) getChallengeById(c *gin.Context) {
+	currentUser, _ := getUserId(c)
+	challengeId := c.Param("challengeId")
+	challenge, err := h.services.Challenges.GetById(challengeId)
+
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, createMessage("Мы не нашли такого челленджа"))
+		return
+	}
+
+	if currentUser != "" {
+		h.services.Challenges.EnrichWithUserParticipant(&challenge, currentUser)
+	}
+
+	commonJSONResponse(c, challenge, err)
+}
+
+// @Summary Get all public challenges
+// @Tags challenges
+// @Description Получение списка публичных челленджей
+// @Accept json
+// @Produce json
+// @Success 200 {array} model.Challenge
+// @Router /challenges/public [get]
+func (h *Controller) getAllPublicChallenges(c *gin.Context) {
+	challenges, err := h.services.Challenges.GetAllPublic()
+	commonJSONResponse(c, challenges, err)
+}
+
+// @Summary Get all own challenges
+// @Security Auth
+// @Tags challenges
+// @Description Получение списка личных челленджей
+// @Accept json
+// @Produce json
+// @Success 200 {array} model.Challenge
+// @Router /challenges/own [get]
+func (h *Controller) getAllOwnChallenges(c *gin.Context) {
+	currentUser, _ := getUserId(c)
+	challenges, err := h.services.Challenges.GetAllOwn(currentUser)
 	commonJSONResponse(c, challenges, err)
 }
 

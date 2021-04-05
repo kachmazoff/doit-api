@@ -8,12 +8,13 @@ import (
 )
 
 func (h *Controller) initUsersRoutes(api *gin.RouterGroup) {
-	users := api.Group("/users/:username")
+	api.GET("/users", h.optionalUserIdentity, h.getAllUsers)
+	user := api.Group("/users/:username")
 	{
-		users.GET("/", h.getUser)
-		users.GET("/participants", h.optionalUserIdentity, h.getUserParticipations)
-		users.GET("/followees", h.getFollowees)
-		users.GET("/followers", h.getFollowers)
+		user.GET("/", h.getUser)
+		user.GET("/participants", h.optionalUserIdentity, h.getUserParticipations)
+		user.GET("/followees", h.getFollowees)
+		user.GET("/followers", h.getFollowers)
 	}
 }
 
@@ -39,6 +40,25 @@ func (h *Controller) getUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, user)
+}
+
+// @Summary Get all users
+// @Tags participants
+// @Description Get all users
+// @Accept json
+// @Produce json
+// @Success 200 {array} model.User
+// @Router /users [get]
+func (h *Controller) getAllUsers(c *gin.Context) {
+	currentUser, _ := getUserId(c)
+	users, err := h.services.Users.GetAll()
+	if currentUser != "" && err == nil {
+		for i := 0; i < len(users); i++ {
+			flag, _ := h.services.Followers.ExistsFromTo(currentUser, users[i].Id)
+			users[i].Subscribed = &flag
+		}
+	}
+	commonJSONResponse(c, users, err)
 }
 
 // @Summary Get user's participations

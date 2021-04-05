@@ -5,6 +5,7 @@ import "github.com/kachmazoff/doit-api/internal/model"
 type Users interface {
 	Create(user model.User) (string, error)
 	ConfirmAccount(userId string) error
+	GetAll() ([]model.User, error)
 	GetByUsername(username string) (model.User, error)
 	GetByEmail(email string) (model.User, error)
 	GetIdByUsername(username string) (string, error)
@@ -12,8 +13,13 @@ type Users interface {
 
 type Challenges interface {
 	Create(challenge model.Challenge) (string, error)
+	GetById(id string) (model.Challenge, error)
 	GetAll() ([]model.Challenge, error)
+	GetAllPublic() ([]model.Challenge, error)
+	GetAllOwn(userId string) ([]model.Challenge, error)
 	Anonymize(*model.Challenge) bool
+	EnrichWithUserParticipant(challenge *model.Challenge, userId string)
+	EnrichAllWithUserParticipant(challenges *[]model.Challenge, userId string)
 }
 
 type Timeline interface {
@@ -63,4 +69,6 @@ type Followers interface {
 
 	GetFollowers(userId string) ([]model.User, error)
 	GetFollowees(userId string) ([]model.User, error)
+
+	ExistsFromTo(fromId, toId string) (bool, error)
 }
