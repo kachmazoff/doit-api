@@ -35,12 +35,57 @@ func (r *ChallengesMysqlRepo) Create(newChallenge model.Challenge) (string, erro
 	return generatedId, nil
 }
 
+func (r *ChallengesMysqlRepo) GetById(id string) (model.Challenge, error) {
+	query := fmt.Sprintf("SELECT * FROM %s WHERE id=? LIMIT 1", challengesTable)
+
+	var challenge model.Challenge
+	if err := r.db.Get(&challenge, query, id); err != nil {
+		return model.Challenge{}, err
+	}
+
+	return challenge, nil
+}
+
 func (r *ChallengesMysqlRepo) GetAll() ([]model.Challenge, error) {
 	query := fmt.Sprintf("SELECT * FROM %s", challengesTable)
 
 	var challenges []model.Challenge
 	if err := r.db.Select(&challenges, query); err != nil {
 		return []model.Challenge{}, err
+	}
+
+	if challenges == nil {
+		challenges = []model.Challenge{}
+	}
+
+	return challenges, nil
+}
+
+func (r *ChallengesMysqlRepo) GetAllPublic() ([]model.Challenge, error) {
+	query := fmt.Sprintf("SELECT * FROM %s WHERE visible_type='public'", challengesTable)
+
+	var challenges []model.Challenge
+	if err := r.db.Select(&challenges, query); err != nil {
+		return []model.Challenge{}, err
+	}
+
+	if challenges == nil {
+		challenges = []model.Challenge{}
+	}
+
+	return challenges, nil
+}
+
+func (r *ChallengesMysqlRepo) GetAllOwn(userId string) ([]model.Challenge, error) {
+	query := fmt.Sprintf("SELECT * FROM %s WHERE author_id=?", challengesTable)
+
+	var challenges []model.Challenge
+	if err := r.db.Select(&challenges, query, userId); err != nil {
+		return []model.Challenge{}, err
+	}
+
+	if challenges == nil {
+		challenges = []model.Challenge{}
 	}
 
 	return challenges, nil

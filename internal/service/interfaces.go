@@ -5,6 +5,7 @@ import "github.com/kachmazoff/doit-api/internal/model"
 type Users interface {
 	Create(user model.User) (string, error)
 	ConfirmAccount(userId string) error
+	GetAll() ([]model.User, error)
 	GetByUsername(username string) (model.User, error)
 	GetByEmail(email string) (model.User, error)
 	GetIdByUsername(username string) (string, error)
@@ -12,11 +13,17 @@ type Users interface {
 
 type Challenges interface {
 	Create(challenge model.Challenge) (string, error)
+	GetById(id string) (model.Challenge, error)
 	GetAll() ([]model.Challenge, error)
+	GetAllPublic() ([]model.Challenge, error)
+	GetAllOwn(userId string) ([]model.Challenge, error)
 	Anonymize(*model.Challenge) bool
+	EnrichWithUserParticipant(challenge *model.Challenge, userId string)
+	EnrichAllWithUserParticipant(challenges *[]model.Challenge, userId string)
 }
 
 type Timeline interface {
+	GetWithFilters(filters model.TimelineFilters) ([]model.TimelineItem, error)
 	GetAll() ([]model.TimelineItem, error)
 	GetCommon() ([]model.TimelineItem, error)
 	GetForUser(userId string) ([]model.TimelineItem, error)
@@ -27,12 +34,13 @@ type Timeline interface {
 
 type Participants interface {
 	Create(participant model.Participant) (string, error)
+	GetByIdUNSAFE(id string) (model.Participant, error)
 	GetById(id string) (model.Participant, error)
 	GetParticipationsOfUser(userId string, onlyPublic, onlyActive bool) ([]model.Participant, error)
 	GetParticipantsInChallenge(challengeId string, onlyPublic, onlyActive bool) ([]model.Participant, error)
 	HasRootAccess(participantId, userId string) bool
 	IsPublic(participantId string) bool
-	Anonymize(*model.Participant) bool
+	Anonymize(participant *model.Participant, userId string) bool
 }
 
 type Notes interface {
@@ -61,4 +69,6 @@ type Followers interface {
 
 	GetFollowers(userId string) ([]model.User, error)
 	GetFollowees(userId string) ([]model.User, error)
+
+	ExistsFromTo(fromId, toId string) (bool, error)
 }

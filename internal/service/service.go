@@ -18,7 +18,7 @@ type Services struct {
 
 func NewServices(r *repository.Repositories, sender mailing.Sender) *Services {
 	users := impl.NewUsersService(r.Users, sender)
-	challenges := impl.NewChallengesService(r.Challenges)
+	challenges := impl.NewChallengesService(r.Challenges, r.Participants)
 	participants := impl.NewParticipantsService(r.Participants)
 	notes := impl.NewNotesService(r.Notes)
 	suggestions := impl.NewSuggestionsService(r.Suggestions)

@@ -151,3 +151,104 @@ func selectBaseTimelineQuery() string {
 // OR
 // t.type='ADD_SUGGESTION'		AND c.visible_type='public' AND p.visible_type='public' AND s.anonymous=false
 // `
+
+func (r *TimelineMysqlRepo) GetWithFilters(filters model.TimelineFilters) ([]model.TimelineItem, error) {
+	var conditions []string
+
+	if filters.TimelineType == "subs" {
+		// TODO: validate filters.userId. (can sql injection)
+		conditions = append(conditions, fmt.Sprintf(`u.id IN (%s)`, selectFolloweesQuery(filters.UserId)))
+	} else if filters.UserId != "" {
+		// TODO: validate filters.userId. (can sql injection)
+		conditions = append(conditions, fmt.Sprintf(`u.id='%s'`, filters.UserId))
+	}
+
+	if filters.LastIndex > -1 {
+		operator := "<"
+		if filters.OrderType == "ASC" {
+			operator = ">"
+		}
+		conditions = append(conditions, fmt.Sprintf(`t.index %s %d`, operator, filters.LastIndex))
+	}
+	if filters.EventTypes != nil && hasValidTypes(filters.EventTypes) {
+		println("WTF")
+		conditions = append(conditions, fmt.Sprintf(`t.type IN %s`, eventTypesToString(filters.EventTypes)))
+	}
+	if filters.ParticipantId != "" {
+		conditions = append(conditions, fmt.Sprintf(`t.participant_id ='%s'`, filters.ParticipantId))
+	}
+	if filters.ChallengeId != "" {
+		conditions = append(conditions, fmt.Sprintf(`t.challenge_id ='%s'`, filters.ChallengeId))
+	}
+
+	// TODO: test
+	if filters.TimelineType == "common" && filters.RequestAuthor != "" {
+		conditions = append(conditions, fmt.Sprintf(`(
+			u.id='%s'
+			OR
+			t.type='CREATE_CHALLENGE'	AND c.visible_type='public' AND c.show_author=true
+			OR
+			(t.type='ACCEPT_CHALLENGE' 	OR t.type='ADD_NOTE') AND c.visible_type='public' AND p.visible_type='public' AND p.anonymous=false
+			OR
+			t.type='ADD_SUGGESTION'		AND c.visible_type='public' AND p.visible_type='public' AND s.anonymous=false
+		)`, filters.RequestAuthor))
+	} else if filters.TimelineType == "subs" || filters.TimelineType == "common" && filters.UserId != "" && (filters.RequestAuthor == "" || filters.RequestAuthor != filters.UserId) {
+		conditions = append(conditions, `(
+			t.type='CREATE_CHALLENGE'	AND c.visible_type='public' AND c.show_author=true
+			OR
+			(t.type='ACCEPT_CHALLENGE' 	OR t.type='ADD_NOTE') AND c.visible_type='public' AND p.visible_type='public' AND p.anonymous=false
+			OR
+			t.type='ADD_SUGGESTION'		AND c.visible_type='public' AND p.visible_type='public' AND s.anonymous=false
+		)`)
+	} else if filters.TimelineType == "common" && filters.UserId == "" {
+		conditions = append(conditions, `(
+			t.type='CREATE_CHALLENGE'	AND c.visible_type='public' 
+			OR
+			(t.type='ACCEPT_CHALLENGE' 	OR t.type='ADD_NOTE' OR t.type='ADD_SUGGESTION')	AND c.visible_type='public' AND p.visible_type='public' 
+		)`)
+	}
+
+	sqlConditions := conditions[0]
+
+	for i := 1; i < len(conditions); i++ {
+		sqlConditions += fmt.Sprintf(" AND %s", conditions[i])
+	}
+
+	query := fmt.Sprintf(`
+	%s
+	WHERE
+		%s
+	ORDER BY t.created %s
+	LIMIT %d
+	`, selectBaseTimelineQuery(), sqlConditions, filters.OrderType, filters.Limit)
+
+	return r.selectTimeline(query)
+}
+
+func isValidEventType(eventType string) bool {
+	return eventType == "CREATE_CHALLENGE" || eventType == "ACCEPT_CHALLENGE" || eventType == "ADD_NOTE" || eventType == "ADD_SUGGESTION"
+}
+
+func hasValidTypes(eventTypes []string) bool {
+	res := len(eventTypes) > 0
+	for i := 0; i < len(eventTypes); i++ {
+		res = res && isValidEventType(eventTypes[i])
+	}
+	return res
+}
+
+func eventTypesToString(eventTypes []string) string {
+	eventTypesCollection := "("
+	counter := 0
+	for i := 0; i < len(eventTypes); i++ {
+		if isValidEventType(eventTypes[i]) {
+			if counter > 0 {
+				eventTypesCollection += ","
+			}
+			eventTypesCollection += fmt.Sprintf(`'%s'`, eventTypes[i])
+		}
+	}
+	eventTypesCollection += ")"
+
+	return eventTypesCollection
+}

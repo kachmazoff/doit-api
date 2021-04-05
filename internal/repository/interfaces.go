@@ -4,6 +4,7 @@ import "github.com/kachmazoff/doit-api/internal/model"
 
 type Users interface {
 	Create(model.User) (string, error)
+	GetAll() ([]model.User, error)
 	GetByUsername(username string) (model.User, error)
 	GetByEmail(email string) (model.User, error)
 	SetStatus(id string, status string) error
@@ -13,12 +14,16 @@ type Users interface {
 
 type Challenges interface {
 	Create(model.Challenge) (string, error)
+	GetById(id string) (model.Challenge, error)
 	// TODO: Remove later. Temp method
 	GetAll() ([]model.Challenge, error)
+	GetAllPublic() ([]model.Challenge, error)
+	GetAllOwn(userId string) ([]model.Challenge, error)
 }
 
 type Timeline interface {
 	CreateChallenge() error
+	GetWithFilters(filters model.TimelineFilters) ([]model.TimelineItem, error)
 	// TODO: Remove later. Temp method
 	GetAll() ([]model.TimelineItem, error)
 	GetCommon() ([]model.TimelineItem, error)
@@ -31,6 +36,7 @@ type Participants interface {
 	GetById(id string) (model.Participant, error)
 	GetParticipationsOfUser(userId string, onlyPublic, onlyActive bool) ([]model.Participant, error)
 	GetParticipantsInChallenge(challengeId string, onlyPublic, onlyActive bool) ([]model.Participant, error)
+	GetByUserInChallenge(userId, challengeId string) (model.Participant, error)
 }
 
 type Notes interface {
@@ -54,4 +60,5 @@ type Followers interface {
 	GetFollowedIds(userId string) ([]string, error)
 	GetFollowers(userId string) ([]model.User, error)
 	GetFollowees(userId string) ([]model.User, error)
+	ExistsFromTo(fromId, toId string) (bool, error)
 }

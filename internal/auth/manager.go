@@ -3,9 +3,10 @@ package auth
 import (
 	"errors"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
 	"math/rand"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 // TokenManager provides logic for JWT & Refresh tokens generation and parsing

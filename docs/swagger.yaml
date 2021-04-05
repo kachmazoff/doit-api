@@ -30,6 +30,8 @@ definitions:
     properties:
       token:
         type: string
+      user:
+        $ref: '#/definitions/model.User'
     type: object
   model.Challenge:
     properties:
@@ -41,6 +43,8 @@ definitions:
         type: string
       id:
         type: string
+      participant:
+        $ref: '#/definitions/model.Participant'
       participants_type:
         type: string
       show_author:
@@ -125,6 +129,8 @@ definitions:
         type: string
       index:
         type: integer
+      participant:
+        $ref: '#/definitions/model.Participant'
       participant_id:
         type: string
       participants_type:
@@ -133,6 +139,8 @@ definitions:
         type: boolean
       status:
         type: string
+      subscribed:
+        type: boolean
       team_id:
         type: string
       title:
@@ -152,10 +160,12 @@ definitions:
         type: string
       id:
         type: string
+      subscribed:
+        type: boolean
       username:
         type: string
     type: object
-host: localhost:8080
+host: localhost:3000
 info:
   contact: {}
   description: API Server for Doit App
@@ -269,6 +279,27 @@ paths:
       summary: Create challenge
       tags:
       - challenges
+  /challenges/{challengeId}:
+    get:
+      consumes:
+      - application/json
+      description: Get challenge's info by id
+      parameters:
+      - description: id челленджа
+        in: path
+        name: challengeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Challenge'
+      summary: Get challenge's info
+      tags:
+      - challenges
   /challenges/{challengeId}/participants:
     get:
       consumes:
@@ -332,6 +363,42 @@ paths:
       summary: Create participant
       tags:
       - participants
+  /challenges/own:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка личных челленджей
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Challenge'
+            type: array
+      security:
+      - Auth: []
+      summary: Get all own challenges
+      tags:
+      - challenges
+  /challenges/public:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка публичных челленджей
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Challenge'
+            type: array
+      summary: Get all public challenges
+      tags:
+      - challenges
   /follow:
     post:
       consumes:
@@ -359,6 +426,27 @@ paths:
       summary: Follow user
       tags:
       - followers
+  /participants/{participantId}:
+    get:
+      consumes:
+      - application/json
+      description: Get participant info by id
+      parameters:
+      - description: id дневника
+        in: path
+        name: participantId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Participant'
+      summary: Get participant info
+      tags:
+      - participants
   /participants/{participantId}/notes:
     get:
       consumes:
@@ -492,7 +580,43 @@ paths:
     get:
       consumes:
       - application/json
-      description: Получение общего таймлайна
+      description: Получение таймлайна по фильтрам
+      parameters:
+      - description: Id пользователя
+        in: query
+        name: userId
+        type: string
+      - description: Тип запрашиваемого таймлайна (subs, common)
+        in: query
+        name: type
+        type: string
+      - description: Id дневника/участника
+        in: query
+        name: participantId
+        type: string
+      - description: Id челленджа
+        in: query
+        name: challengeId
+        type: string
+      - description: Массив типов событий ('CREATE_CHALLENGE', 'ACCEPT_CHALLENGE',
+          'ADD_NOTE', 'ADD_SUGGESTION')
+        in: query
+        items:
+          type: string
+        name: eventTypes
+        type: array
+      - description: Порядок сортировки (ASC, DESC)
+        in: query
+        name: order
+        type: string
+      - description: Индекс последней полученной записи
+        in: query
+        name: lastIndex
+        type: integer
+      - description: Максимальное количество записей
+        in: query
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:
@@ -506,7 +630,7 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/dto.MessageResponse'
-      summary: Get common timeline
+      summary: Get timeline with filters
       tags:
       - timeline
   /timeline/own:
@@ -592,6 +716,23 @@ paths:
       summary: Unfollow user
       tags:
       - followers
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Get all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+      summary: Get all users
+      tags:
+      - participants
   /users/{username}:
     get:
       consumes:

@@ -11,4 +11,6 @@ type Challenge struct {
 	Body             *string   `json:"body" db:"body"`
 	VisibleType      string    `json:"visible_type" db:"visible_type"`
 	ParticipantsType string    `json:"participants_type" db:"participants_type"`
+
+	Participant *Participant `json:"participant,omitempty" db:"-"`
 }

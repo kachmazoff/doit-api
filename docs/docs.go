@@ -190,6 +190,95 @@ var doc = `{
                 }
             }
         },
+        "/challenges/own": {
+            "get": {
+                "security": [
+                    {
+                        "Auth": []
+                    }
+                ],
+                "description": "Получение списка личных челленджей",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "challenges"
+                ],
+                "summary": "Get all own challenges",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Challenge"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/challenges/public": {
+            "get": {
+                "description": "Получение списка публичных челленджей",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "challenges"
+                ],
+                "summary": "Get all public challenges",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Challenge"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/challenges/{challengeId}": {
+            "get": {
+                "description": "Get challenge's info by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "challenges"
+                ],
+                "summary": "Get challenge's info",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id челленджа",
+                        "name": "challengeId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Challenge"
+                        }
+                    }
+                }
+            }
+        },
         "/challenges/{challengeId}/participants": {
             "get": {
                 "description": "Получение списка участников в челлендже",
@@ -325,6 +414,38 @@ var doc = `{
                         "description": "Forbidden",
                         "schema": {
                             "$ref": "#/definitions/dto.MessageResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/participants/{participantId}": {
+            "get": {
+                "description": "Get participant info by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "participants"
+                ],
+                "summary": "Get participant info",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id дневника",
+                        "name": "participantId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Participant"
                         }
                     }
                 }
@@ -531,7 +652,7 @@ var doc = `{
         },
         "/timeline": {
             "get": {
-                "description": "Получение общего таймлайна",
+                "description": "Получение таймлайна по фильтрам",
                 "consumes": [
                     "application/json"
                 ],
@@ -541,7 +662,60 @@ var doc = `{
                 "tags": [
                     "timeline"
                 ],
-                "summary": "Get common timeline",
+                "summary": "Get timeline with filters",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id пользователя",
+                        "name": "userId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Тип запрашиваемого таймлайна (subs, common)",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Id дневника/участника",
+                        "name": "participantId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Id челленджа",
+                        "name": "challengeId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Массив типов событий ('CREATE_CHALLENGE', 'ACCEPT_CHALLENGE', 'ADD_NOTE', 'ADD_SUGGESTION')",
+                        "name": "eventTypes",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Порядок сортировки (ASC, DESC)",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Индекс последней полученной записи",
+                        "name": "lastIndex",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Максимальное количество записей",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -685,6 +859,32 @@ var doc = `{
                         "description": "Forbidden",
                         "schema": {
                             "$ref": "#/definitions/dto.MessageResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "description": "Get all users",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "participants"
+                ],
+                "summary": "Get all users",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.User"
+                            }
                         }
                     }
                 }
@@ -886,6 +1086,9 @@ var doc = `{
             "properties": {
                 "token": {
                     "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/model.User"
                 }
             }
         },
@@ -903,6 +1106,9 @@ var doc = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "participant": {
+                    "$ref": "#/definitions/model.Participant"
                 },
                 "participants_type": {
                     "type": "string"
@@ -1032,6 +1238,9 @@ var doc = `{
                 "index": {
                     "type": "integer"
                 },
+                "participant": {
+                    "$ref": "#/definitions/model.Participant"
+                },
                 "participant_id": {
                     "type": "string"
                 },
@@ -1043,6 +1252,9 @@ var doc = `{
                 },
                 "status": {
                     "type": "string"
+                },
+                "subscribed": {
+                    "type": "boolean"
                 },
                 "team_id": {
                     "type": "string"
@@ -1073,6 +1285,9 @@ var doc = `{
                 "id": {
                     "type": "string"
                 },
+                "subscribed": {
+                    "type": "boolean"
+                },
                 "username": {
                     "type": "string"
                 }
@@ -1100,7 +1315,7 @@ type swaggerInfo struct {
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.0",
-	Host:        "localhost:8080",
+	Host:        "localhost:3000",
 	BasePath:    "/api/",
 	Schemes:     []string{},
 	Title:       "Doit API",

@@ -15,6 +15,17 @@ func NewFollowersMysqlRepo(db *sqlx.DB) *FollowersMysqlRepo {
 	return &FollowersMysqlRepo{db: db}
 }
 
+func (r *FollowersMysqlRepo) ExistsFromTo(fromId, toId string) (bool, error) {
+	query := fmt.Sprintf("SELECT COUNT(*) FROM %s WHERE follower_id=? AND followee_id=? LIMIT 1", followersTable)
+	var count int
+	if err := r.db.Get(&count, query, fromId, toId); err != nil {
+		println(err.Error())
+		return false, err
+	}
+
+	return count > 0, nil
+}
+
 func (r *FollowersMysqlRepo) GetFollowersIds(userId string) ([]string, error) {
 	query := selectFollowersQuery(userId)
 	return commonHandleSelectIds(r.db, query)
